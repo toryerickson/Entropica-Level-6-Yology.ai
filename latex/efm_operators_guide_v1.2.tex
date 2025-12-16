@@ -1,0 +1,850 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============ PACKAGES ============
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\sloppy
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{float}
+\usepackage{tabularx}
+
+% ============ COLORS ============
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{passgreen}{rgb}{0,0.5,0}
+\definecolor{failred}{rgb}{0.8,0,0}
+\definecolor{warningbg}{rgb}{1.0,0.97,0.88}
+\definecolor{warningborder}{rgb}{1.0,0.6,0.0}
+\definecolor{notebg}{rgb}{0.93,0.95,1.0}
+\definecolor{noteborder}{rgb}{0.4,0.5,0.7}
+\definecolor{playbookbg}{rgb}{0.95,0.98,0.95}
+\definecolor{playbookborder}{rgb}{0.2,0.6,0.3}
+
+% ============ CUSTOM BOXES ============
+\newtcolorbox{notebox}{
+    colback=notebg,
+    colframe=noteborder,
+    boxrule=1pt,
+    left=6pt, right=6pt, top=6pt, bottom=6pt
+}
+
+\newtcolorbox{warningbox}[1][Warning]{
+    colback=warningbg,
+    colframe=warningborder,
+    boxrule=1.5pt,
+    left=6pt, right=6pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries,
+    title={#1}
+}
+
+\newtcolorbox{playbookbox}[1][Playbook]{
+    colback=playbookbg,
+    colframe=playbookborder,
+    boxrule=1.5pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    fonttitle=\bfseries,
+    title={#1},
+    breakable
+}
+
+% ============ HEADERS ============
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{EFM Operator's Guide}}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ============ HYPERREF ============
+\hypersetup{
+    colorlinks=true,
+    linkcolor=codeblue,
+    urlcolor=cyan,
+    pdftitle={EFM Codex: Operator's Guide},
+    pdfauthor={Entropica SPC},
+}
+
+% ============ DOCUMENT ============
+\title{
+    \textbf{\LARGE EFM Codex: Operator's Guide}\\[0.3cm]
+    \large Deployment, Monitoring, and Response\\[0.2cm]
+    \textit{Appendix O to Volumes I--II}
+}
+
+\author{
+    \textbf{Entropica SPC}\\
+    Yology Research Division
+}
+
+\date{Version 1.1 --- December 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{notebox}
+\textbf{Audience:} This guide is for operators, SREs, and governance teams responsible for deploying and running an EFM forest. It is \textit{not} for proving invariants or modifying the specification.
+
+\textbf{Scope:} Summarizes normative behavior from Volumes I--II and translates it into operational concepts and procedures. For formal definitions and proofs, see the source volumes.
+\end{notebox}
+
+\tableofcontents
+
+\newpage
+
+% ============ SECTION 1 ============
+\section{Core Concepts in Operator Terms}
+
+\subsection{Entity Glossary}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}p{3cm}p{4cm}p{6cm}@{}}
+\toprule
+\textbf{EFM Term} & \textbf{Operator Analog} & \textbf{Description} \\
+\midrule
+Capsule & Managed agent instance & Individual autonomous unit with role and permissions \\
+Vault (Layer 0) & System-wide safety baseline & Immutable constraints; cannot be modified at runtime \\
+Reflex Engine (L0.5) & Per-capsule circuit breaker & Sub-10ms safety interrupt; blocks unsafe actions \\
+Arbiter Layer (L2) & Distributed safety council & Deliberative consensus for ambiguous decisions \\
+d-CAM & Consensus protocol & Byzantine-fault-tolerant voting among Arbiters \\
+Forest (L3) & Fleet topology & Swarm structure with dialect lineages \\
+Trunk & Main branch & Primary dialect shared by capsule group \\
+Branch & Canary/variant & Diverged dialect subset under evaluation \\
+Gardener & Human operator & Override authority with cryptographic keys \\
+\bottomrule
+\end{tabular}
+\caption{EFM concepts mapped to operator-familiar terms.}
+\end{table}
+
+\subsection{The Two Primary Health Signals}
+
+Operators monitor two key metrics:
+
+\begin{enumerate}
+    \item \textbf{$\Delta S$ (Behavioral Entropy)} --- Per-capsule (Vol.~I \S3). Measures how ``strange'' an individual capsule is behaving relative to its baseline. Threshold: $\tau$ (role-dependent, typically 0.3--0.5).
+    
+    \item \textbf{SCI (Swarm Coherence Index)} --- Per-trunk/branch (Vol.~II \S3.2). Measures how ``aligned'' a population is behaving collectively. Range: 0--1. Threshold: $\theta_{SCI}$ (deployment-dependent, typically 0.65--0.85).
+\end{enumerate}
+
+\begin{notebox}
+\textbf{Key Insight:} A swarm can have all capsules with $\Delta S < \tau$ (all individually ``safe'') while $SCI < \theta_{SCI}$ (collectively drifting). Both signals are necessary.
+\end{notebox}
+
+\newpage
+
+% ============ SECTION 2 ============
+\section{Standing Up an EFM Forest}
+
+\subsection{Pre-Deployment Checklist}
+
+\begin{enumerate}
+    \item \textbf{Define Vault Commandments} --- Immutable safety rules. Once deployed, cannot be changed without full system rebuild.
+    
+    \item \textbf{Configure Genesis Parameters} --- Role archetypes, $\tau$/$\lambda$ defaults, permission matrices.
+    
+    \item \textbf{Provision Capsules} --- Deploy initial capsule fleet with Genesis Protocol. Verify each capsule's Vault Hash Chain links to system root.
+    
+    \item \textbf{Deploy Arbiter Set} --- Minimum 5 Judicial Capsules for $f=2$ Byzantine tolerance. Configure d-CAM quorum parameters.
+    
+    \item \textbf{Initialize d-CTM} --- Distributed ledger storage. Verify append-only property and ZK-SP integration.
+    
+    \item \textbf{Configure Gardener Keys} --- Generate and securely store Gardener override keys. Test override on non-critical verdict.
+    
+    \item \textbf{Enable SCI Computation} --- Configure $d_{behav}$ components, sampling strategy (if $>10^4$ capsules), and alert thresholds.
+\end{enumerate}
+
+\subsection{First Forest Verification}
+
+Before production traffic:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Check} & \textbf{Expected} & \textbf{Command/Method} \\
+\midrule
+Capsules online & $\geq N_{min}$ & Dashboard: Active Capsules \\
+d-CTM reachable & All nodes & \texttt{dctm-health --all} \\
+SCI computation & Value $\in [0,1]$ & Dashboard: SCI gauge \\
+Reflex latency & $<10$ms p99 & Metrics: \texttt{reflex\_latency\_p99} \\
+Arbiter quorum & $\geq 5$ available & \texttt{dcam-status --quorum} \\
+Gardener override & Success & Manual test on staging verdict \\
+\bottomrule
+\end{tabular}
+\caption{First-forest verification checklist.}
+\end{table}
+
+\newpage
+
+% ============ SECTION 3 ============
+\section{Day-to-Day Monitoring}
+
+\subsection{Key Metrics and Alerts}
+
+Wire up the following to your monitoring stack (Prometheus, Datadog, etc.):
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4cm}p{3cm}p{5.5cm}@{}}
+\toprule
+\textbf{Metric} & \textbf{Alert Threshold} & \textbf{Action} \\
+\midrule
+\texttt{delta\_s\_p95} & $> \tau - 0.05$ & Review high-entropy capsules \\
+\texttt{sci\_per\_trunk} & $< \theta_{alert}$ & Investigate drift pattern \\
+\texttt{reflex\_halt\_rate} & $> 10$/min sustained & Check for misconfiguration \\
+\texttt{arbiter\_verdict\_latency} & $> 5$s p99 & Scale Arbiter pool \\
+\texttt{orphan\_count} & $> 0$ & Verify Orphan Protocol active \\
+\texttt{fork\_rate} & $> 2$/hour & Possible instability \\
+\texttt{branch\_count} & $> B_{max} - 2$ & Approaching branch limit \\
+\bottomrule
+\end{tabular}
+\caption{Recommended monitoring configuration.}
+\end{table}
+
+\subsection{Dashboard Layout}
+
+Recommended panels:
+
+\begin{enumerate}
+    \item \textbf{Fleet Health} --- Capsule count by state (ACTIVE, PROBATION, QUARANTINE, PURGED)
+    \item \textbf{Entropy Distribution} --- Histogram of $\Delta S$ across all capsules
+    \item \textbf{SCI Timeseries} --- Per-trunk SCI with threshold lines
+    \item \textbf{Arbiter Activity} --- Verdict rate, latency, decision breakdown
+    \item \textbf{Forest Topology} --- Visual tree of trunks/branches with capsule counts
+    \item \textbf{Gardener Actions} --- Recent overrides and approvals
+\end{enumerate}
+
+\newpage
+
+% ============ SECTION 4 ============
+\section{Response Playbooks}
+
+\subsection{Entropy Spike (S2--S3 Severity)}
+
+\begin{playbookbox}[Playbook: High $\Delta S$ on Individual Capsule]
+\textbf{Trigger:} $\Delta S \geq \tau$ for capsule $C$, Reflex halt issued.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Inspect History:} Query d-CTM for $C$'s recent action log. Identify which $\Delta S$ component spiked (action, resource, goal).
+    
+    \item \textbf{Classify:}
+    \begin{itemize}
+        \item \textit{Expected workload change} $\rightarrow$ Adjust $\tau$ via Threshold Governance (Vol.~II \S2.6)
+        \item \textit{Legitimate anomaly} $\rightarrow$ Leave halt in place, monitor
+        \item \textit{Misconfiguration} $\rightarrow$ Fix configuration, restart capsule
+        \item \textit{Potential compromise} $\rightarrow$ Escalate to Arbiter for QUARANTINE
+    \end{itemize}
+    
+    \item \textbf{Document:} Log decision rationale in d-CTM via Gardener annotation.
+\end{enumerate}
+
+\textbf{Escalation:} If pattern repeats across multiple capsules, investigate swarm-level cause (see SCI Dip playbook).
+\end{playbookbox}
+
+\subsection{SCI Below Threshold}
+
+\begin{playbookbox}[Playbook: SCI Dip Below $\theta_{fork}$]
+\textbf{Trigger:} $SCI < \theta_{fork}$ for $> T_{debounce}$ ticks.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Identify Divergence:} Use DDI breakdown to find which capsule subset is drifting. Check behavioral distance matrix.
+    
+    \item \textbf{Review Arbiter Verdicts:} Query recent FORK proposals. If Arbiter already deliberating, wait for verdict.
+    
+    \item \textbf{Validate Fork Decision:}
+    \begin{itemize}
+        \item If FORK approved: Verify branch created correctly, SCI improved per-group
+        \item If FORK rejected: Review DCG rationale; consider manual Gardener review
+    \end{itemize}
+    
+    \item \textbf{Post-Fork Monitoring:} Track branch stability. Prepare for eventual Merge if branch proves valuable.
+\end{enumerate}
+
+\textbf{Escalation:} If SCI continues dropping post-fork, investigate deeper (possible adversarial drift or systemic issue).
+\end{playbookbox}
+
+\subsection{Orphan Detection}
+
+\begin{playbookbox}[Playbook: Orphan Capsules Detected]
+\textbf{Trigger:} \texttt{orphan\_count} $> 0$.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Verify Protocol Active:} Confirm Orphan Protocol is running (capsules should be in QUARANTINE).
+    
+    \item \textbf{Check Recovery Attempts:} Query d-CTM for re-sync attempts. Are compatible trunks being tried?
+    
+    \item \textbf{Monitor Timeout:} If approaching $N_{orphan\_timeout}$, decide:
+    \begin{itemize}
+        \item \textit{Recoverable} $\rightarrow$ Manually assign to trunk via Gardener action
+        \item \textit{Unrecoverable} $\rightarrow$ Allow PURGE, review forensics
+    \end{itemize}
+    
+    \item \textbf{Post-Purge Review:} Examine d-CTM entry for PURGE. Verify compliance with E2 Purge Justification constraint (Vol.~II \S3.9.5).
+\end{enumerate}
+
+\textbf{Escalation:} Multiple orphans simultaneously may indicate trunk corruption or network partition.
+\end{playbookbox}
+
+\subsection{Catastrophic Failure: Arbiter Unavailability}
+
+\begin{playbookbox}[Runbook 1: ALL Arbiters Unavailable]
+\textbf{Trigger:} Arbiter availability $< 20\%$ or all Arbiters unreachable.
+
+\textbf{Severity:} S4 (CRITICAL)
+
+\textbf{Immediate Actions:}
+\begin{enumerate}
+    \item \textbf{Verify Scope:} Confirm this is not a monitoring failure. Check network connectivity to Arbiter nodes.
+    
+    \item \textbf{Emergency Spawn:} If truly unavailable, spawn emergency Arbiters from standby pool:
+    \begin{verbatim}
+    gardener spawn-arbiters --emergency --count=3
+    \end{verbatim}
+    
+    \item \textbf{Queue Freeze:} Escalation queue will grow. Set queue priority to CRITICAL-only:
+    \begin{verbatim}
+    efm-cli escalation --mode=critical-only
+    \end{verbatim}
+    
+    \item \textbf{Capsule Guidance:} Broadcast to capsules: ``Arbiters recovering, reduce escalations''
+\end{enumerate}
+
+\textbf{Recovery Criteria:}
+\begin{itemize}
+    \item Arbiter availability $> 50\%$
+    \item Escalation queue $< 100$ pending
+    \item No new Arbiter failures for 10K ticks
+\end{itemize}
+
+\textbf{Post-Incident:} Root cause analysis required. Check for common cause (resource exhaustion, coordinated attack, network partition).
+\end{playbookbox}
+
+\subsection{Catastrophic Failure: d-CTM Compromise}
+
+\begin{playbookbox}[Runbook 2: d-CTM Integrity Compromised]
+\textbf{Trigger:} d-CTM hash verification failure OR write latency $> 1000$ms sustained.
+
+\textbf{Severity:} S5 (EMERGENCY)
+
+\textbf{Immediate Actions:}
+\begin{enumerate}
+    \item \textbf{Halt All Operations:} This is a Layer 0 violation. Issue forest-wide FREEZE:
+    \begin{verbatim}
+    gardener forest --action=FREEZE --reason=DCTM_COMPROMISE
+    \end{verbatim}
+    
+    \item \textbf{Isolate d-CTM:} Prevent further writes until integrity verified:
+    \begin{verbatim}
+    efm-cli dctm --mode=read-only
+    \end{verbatim}
+    
+    \item \textbf{Integrity Check:} Run full verification against backup:
+    \begin{verbatim}
+    efm-cli dctm --verify --against=backup
+    \end{verbatim}
+    
+    \item \textbf{If Corrupted:} Initiate rollback to last known-good state (see Appendix J \S8).
+\end{enumerate}
+
+\textbf{Recovery Criteria:}
+\begin{itemize}
+    \item d-CTM integrity verified (hash match)
+    \item Write latency $< 100$ms
+    \item Gardener sign-off on recovery
+\end{itemize}
+
+\textbf{Post-Incident:} Mandatory forensic replay (Appendix M). Identify attack vector or corruption source.
+\end{playbookbox}
+
+\subsection{Catastrophic Failure: Runaway Spawn}
+
+\begin{playbookbox}[Runbook 3: Runaway Spawn Event]
+\textbf{Trigger:} Spawn rate $> 2 \times R_{max}$ OR depth exceeds $D_{max}$ anywhere.
+
+\textbf{Severity:} S4 (CRITICAL)
+
+\textbf{Immediate Actions:}
+\begin{enumerate}
+    \item \textbf{Emergency Lockdown:} ASG should auto-trigger, but verify:
+    \begin{verbatim}
+    efm-cli spawn --check-lockdown
+    \end{verbatim}
+    
+    \item \textbf{If Not Locked:} Manually trigger:
+    \begin{verbatim}
+    gardener spawn --lockdown --R_max=0 --tau=1.0
+    \end{verbatim}
+    
+    \item \textbf{Identify Source:} Query d-CTM for spawn lineage:
+    \begin{verbatim}
+    efm-cli lineage --depth-exceeded --last=1000
+    \end{verbatim}
+    
+    \item \textbf{Quarantine Branch:} Isolate the runaway lineage:
+    \begin{verbatim}
+    gardener quarantine --lineage=<ROOT_ID>
+    \end{verbatim}
+\end{enumerate}
+
+\textbf{Recovery Criteria:}
+\begin{itemize}
+    \item Spawn rate $\leq R_{max}$
+    \item All capsules $D \leq D_{max}$
+    \item ASG parameters restored to operational bounds
+\end{itemize}
+
+\textbf{Post-Incident:} Review ASG configuration. Was $R_{max}$ appropriate? Adjust deployment profile if needed.
+\end{playbookbox}
+
+\subsection{Cascading Failure Decision Tree (Gap 7)}
+
+\begin{warningbox}[Critical Operational Guidance]
+Real-world failures cascade. When multiple symptoms appear simultaneously, use this decision tree to identify the \textbf{primary failure} and execute the correct runbook.
+\end{warningbox}
+
+\begin{playbookbox}[Runbook 0: Cascading Failure Diagnosis]
+\textbf{Trigger:} Multiple failure symptoms detected simultaneously (e.g., Arbiter failures + escalation queue growth + d-CTM slowdown).
+
+\textbf{The Problem:}
+\begin{verbatim}
+Tick 0:    Arbiter failure -> Escalation queue grows
+Tick 1K:   Queue growth -> Memory pressure -> d-CTM writes slow
+Tick 2K:   d-CTM slow -> Health monitoring delayed -> False readings
+Tick 3K:   False health -> ASG reduces spawn -> System underutilized
+Tick 4K:   Multiple symptoms: Which runbook?
+\end{verbatim}
+
+\textbf{Step 1: Identify Primary Failure}
+
+Run diagnostics in this \textbf{exact priority order}:
+
+\begin{enumerate}
+    \item \textbf{d-CTM Integrity Check} (highest priority):
+    \begin{verbatim}
+    efm-cli dctm --verify-integrity
+    \end{verbatim}
+    \textit{If CORRUPTED} $\rightarrow$ \textbf{Runbook 2 IMMEDIATELY} (this is Layer 0)
+
+    \item \textbf{Reflex Engine Health}:
+    \begin{verbatim}
+    efm-cli reflex --status
+    \end{verbatim}
+    \textit{If DOWN} $\rightarrow$ \textbf{EMERGENCY HALT} (Layer 0 violation)
+
+    \item \textbf{Arbiter Availability}:
+    \begin{verbatim}
+    efm-cli arbiters --status
+    \end{verbatim}
+    \textit{If $< 50\%$} $\rightarrow$ \textbf{Runbook 1} (Arbiter recovery)
+
+    \item \textbf{Spawn Rate Anomaly}:
+    \begin{verbatim}
+    efm-cli spawn --check
+    \end{verbatim}
+    \textit{If $> R_{max}$} $\rightarrow$ \textbf{Runbook 3} (spawn lockdown)
+\end{enumerate}
+
+\textbf{Step 2: Execute Primary Runbook}
+
+Follow the procedures for whichever failure was identified first. Do NOT try to address secondary effects until primary is resolved.
+
+\textbf{Step 3: Monitor Secondary Effects}
+
+Every 1000 ticks, re-run Step 1 diagnostics:
+\begin{itemize}
+    \item If all checks pass $\rightarrow$ Recovery in progress
+    \item If new failure detected $\rightarrow$ Escalate to Gardener (human decision needed)
+    \item If same failure persists $\rightarrow$ Continue current runbook
+\end{itemize}
+
+\textbf{Step 4: Root Cause Analysis}
+
+After recovery, mandatory forensic replay (Appendix M):
+\begin{itemize}
+    \item Which component failed first?
+    \item How did failure propagate?
+    \item How to prevent cascade in future?
+\end{itemize}
+
+\textbf{Decision Matrix:}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Symptom Combination} & \textbf{Likely Primary} & \textbf{Action} \\
+\midrule
+Arbiter $\downarrow$ + Queue $\uparrow$ & Arbiter failure & Runbook 1 \\
+d-CTM slow + Everything else & d-CTM issue & Runbook 2 \\
+Spawn $\uparrow$ + Depth $\uparrow$ & Runaway spawn & Runbook 3 \\
+All symptoms at once & d-CTM first & Runbook 2 then reassess \\
+Reflex down + Anything & Reflex failure & EMERGENCY HALT \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{playbookbox}
+
+\subsection{Partial System Failure}
+
+\begin{playbookbox}[Playbook: Partial Arbiter Failure (20--50\%)]
+\textbf{Trigger:} Arbiter availability between 20\% and 50\%.
+
+\textbf{Severity:} S3 (HIGH)
+
+\textbf{Note:} This is NOT ``all Arbiters failed'' (Runbook 1) but partial degradation.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Assess Severity:}
+    \begin{itemize}
+        \item $>50\%$ available $\rightarrow$ Minor degradation, monitor only
+        \item $20-50\%$ available $\rightarrow$ This playbook
+        \item $<20\%$ available $\rightarrow$ Runbook 1 (emergency)
+    \end{itemize}
+    
+    \item \textbf{Spawn Replacement Arbiters:}
+    \begin{verbatim}
+    gardener spawn-arbiters --count=<FAILED_COUNT/2>
+    \end{verbatim}
+    
+    \item \textbf{Redistribute Load:}
+    \begin{verbatim}
+    efm-cli arbiters --rebalance
+    \end{verbatim}
+    
+    \item \textbf{Investigate Common Cause:}
+    \begin{itemize}
+        \item Network partition? Check connectivity between Arbiter nodes
+        \item Resource exhaustion? Check memory/CPU on failed nodes
+        \item Coordinated attack? Check for suspicious patterns in d-CTM
+    \end{itemize}
+    
+    \item \textbf{Alert Gardener:} Partial failures often indicate emerging problems
+\end{enumerate}
+
+\textbf{Recovery Criteria:}
+\begin{itemize}
+    \item Arbiter availability $> 90\%$
+    \item No new failures for 5K ticks
+    \item Escalation queue stable
+\end{itemize}
+\end{playbookbox}
+
+\newpage
+
+% ============ SECTION 5 ============
+\section{Configuration and Tuning}
+
+\subsection{Tunable Parameters}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.5cm}p{2.5cm}p{3cm}p{3.5cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Default} & \textbf{Tuning Method} & \textbf{Constraint} \\
+\midrule
+$\tau$ (entropy threshold) & Role-dependent & Threshold Governance & $\tau \in [\tau_{min}, \tau_{max}]$ \\
+$\lambda$ (heuristic tolerance) & 0.1 & Threshold Governance & $\lambda \in [0, \lambda_{max}]$ \\
+$\theta_{SCI}$ (fork threshold) & 0.7 & Operator config & Per deployment regime \\
+$T_{debounce}$ & 100 ticks & Operator config & $> 0$ \\
+$N_{orphan\_timeout}$ & 5000 ticks & Operator config & $> T_{recovery}$ \\
+$B_{max}$ (branch limit) & 10 & Operator config & $> 0$ \\
+ATP horizon $K_{max}$ & 5000 ticks & Operator config & $> 0$ \\
+\bottomrule
+\end{tabular}
+\caption{Tunable parameters and constraints.}
+\end{table}
+
+\subsection{Safe Change Workflow}
+
+All parameter changes follow this workflow:
+
+\begin{enumerate}
+    \item \textbf{Propose:} Submit change request with justification
+    \item \textbf{Validate:} For $\tau$/$\lambda$ changes, run Monotonic Sensitivity check (Vol.~I Theorem 3.1)
+    \item \textbf{Approve:} Gardener signs change (or Arbiter for Threshold Governance)
+    \item \textbf{Log:} Change recorded to d-CTM with ZK-SP proof
+    \item \textbf{Monitor:} Watch affected metrics for $T_{observation}$ ticks
+    \item \textbf{Rollback:} If regression detected, revert via same workflow
+\end{enumerate}
+
+\begin{warningbox}[Never Modify Directly]
+The following are \textbf{immutable} and cannot be changed at runtime:
+\begin{itemize}
+    \item Vault Commandments (Layer 0)
+    \item Reflex-Core rules (Layer 0.5)
+    \item Genesis root hash
+    \item d-CTM append-only property
+\end{itemize}
+Changes to these require full system rebuild.
+\end{warningbox}
+
+\newpage
+
+% ============ SECTION 6 ============
+\section{Governance and Audits}
+
+\subsection{Gardener Responsibilities}
+
+\begin{enumerate}
+    \item \textbf{Override Authority:} Can override any d-CAM verdict (subject to Vault constraints)
+    \item \textbf{DCG Review:} Review Deliberation Context Graphs for high-impact decisions (Vol.~II \S2.3)
+    \item \textbf{Micro-Heuristic Approval:} Sign off on Reflex-Heuristic updates derived from Arbiter precedent
+    \item \textbf{Conflict Arbitration:} Resolve disputes between safety and performance
+    \item \textbf{Audit Cooperation:} Provide d-CTM access for compliance reviews
+\end{enumerate}
+
+\subsection{Incident Reconstruction}
+
+To reconstruct any incident from audit trail:
+
+\begin{enumerate}
+    \item \textbf{Identify Verdict:} Query d-CTM by capsule ID, timestamp, or verdict type
+    \item \textbf{Retrieve DCG:} Use \texttt{dcg\_hash} to fetch full reasoning graph (Vol.~II Definition 2.3)
+    \item \textbf{Verify ZK-SP:} Confirm proof chain is valid (tamper detection)
+    \item \textbf{Trace Lineage:} Follow Vault Hash Chain to genesis for affected capsules
+    \item \textbf{Document:} Produce audit report showing invariant compliance
+\end{enumerate}
+
+\subsection{Compliance Checklist}
+
+For ``meaningful human control'' (EU AI Act Article 14 and similar):
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}p{6cm}ll@{}}
+\toprule
+\textbf{Requirement} & \textbf{EFM Mechanism} & \textbf{Evidence} \\
+\midrule
+Human can understand system behavior & DCG, d-CTM logs & Audit reports \\
+Human can intervene & Gardener override & Override logs in d-CTM \\
+Human can stop system & Gardener PURGE authority & Purge records \\
+Decisions are traceable & ZK-SP chain & Proof verification \\
+System cannot override human & Vault constraint on overrides & Architecture \\
+\bottomrule
+\end{tabular}
+\caption{Regulatory compliance mapping.}
+\end{table}
+
+\newpage
+
+% ============ SECTION 7 ============
+\section{Quick Reference}
+
+\subsection{Common Commands}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{5cm}p{8cm}@{}}
+\toprule
+\textbf{Task} & \textbf{Command} \\
+\midrule
+Check capsule status & \texttt{efm-ctl capsule status <id>} \\
+Query d-CTM & \texttt{dctm-query --filter "capsule=<id>"} \\
+View SCI for trunk & \texttt{efm-ctl forest sci <trunk\_id>} \\
+List active branches & \texttt{efm-ctl forest branches} \\
+Initiate Gardener override & \texttt{gardener-ctl override <verdict\_id> --reason "..."} \\
+Check Arbiter quorum & \texttt{dcam-status --quorum} \\
+Export audit trail & \texttt{dctm-export --from <ts> --to <ts> --format json} \\
+\bottomrule
+\end{tabular}
+\caption{Common operator commands (implementation-specific; adjust for your deployment).}
+\end{table}
+
+\subsection{Severity Levels}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Level} & \textbf{$\Delta S$ Range} & \textbf{Action} & \textbf{Response Time} \\
+\midrule
+S0 (Normal) & $< 0.5\tau$ & None & --- \\
+S1 (Elevated) & $0.5\tau$ -- $0.8\tau$ & Monitor & Next shift \\
+S2 (Warning) & $0.8\tau$ -- $\tau$ & Investigate & 1 hour \\
+S3 (Critical) & $\geq \tau$ & Reflex halt, review & Immediate \\
+\bottomrule
+\end{tabular}
+\caption{Severity levels and response expectations.}
+\end{table}
+
+%==============================================================================
+\section{Implementation Guidance}
+\label{sec:implementation}
+%==============================================================================
+
+This section provides working examples for key operational concepts.
+
+\subsection{Micro-Heuristic Deployment}
+
+Micro-Heuristics are compact behavioral patterns deployed to the Reflex-Heuristic layer:
+
+\begin{lstlisting}[language=Python, caption={Micro-Heuristic deployment example.}]
+from efm.reflex import MicroHeuristic, ReflexHeuristic
+
+# Define a new micro-heuristic for resource hoarding detection
+hoarding_detector = MicroHeuristic(
+    name="resource_hoarding_v1",
+    pattern=b"\x12\x34...\x56",  # 64-byte signature
+    severity=Severity.S2,
+    response=Response.THROTTLE,
+    metadata={
+        "author": "discovery_stack",
+        "source": "golden_heuristic_GH-2847",
+        "validated": True
+    }
+)
+
+# Deploy via Validation Gate (ensures Monotonic Sensitivity)
+reflex = ReflexHeuristic.current()
+result = reflex.deploy(hoarding_detector)
+
+if result.success:
+    print(f"Deployed: {result.signature_id}")
+    print(f"New sensitivity: {result.new_sensitivity}")
+else:
+    print(f"Rejected: {result.reason}")  # e.g., "monotonicity_violation"
+\end{lstlisting}
+
+\begin{notebox}
+\textbf{Monotonic Sensitivity:} The Validation Gate ensures that new micro-heuristics only \textit{increase} detection sensitivity. If a proposed heuristic would reduce sensitivity (fewer detections), it is rejected. See Vol.~I \S3.5.
+\end{notebox}
+
+\subsection{ZK-SP Audit Path Verification}
+
+Operators can verify the ZK-SP audit trail for any capsule:
+
+\begin{lstlisting}[language=Python, caption={ZK-SP audit path verification.}]
+from efm.audit import ZKSPVerifier, AuditPath
+
+# Retrieve audit path for a capsule
+capsule_id = "C-2024-12-15-00042"
+path = AuditPath.for_capsule(capsule_id)
+
+# Verify the complete chain
+verifier = ZKSPVerifier()
+result = verifier.verify_chain(path)
+
+print(f"Chain length: {len(path.proofs)}")
+print(f"Genesis anchor: {path.genesis_hash[:16]}...")
+print(f"Current anchor: {path.current_hash[:16]}...")
+print(f"Verified: {result.valid}")
+
+if not result.valid:
+    print(f"Break at proof #{result.break_index}")
+    print(f"Reason: {result.reason}")
+
+# Verify specific state at tick
+tick = 50000
+state_proof = verifier.verify_state_at_tick(capsule_id, tick)
+print(f"State at t={tick}: {state_proof.state_hash[:16]}...")
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\caption{ZK-SP verification CLI commands.}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Command} & \textbf{Description} \\
+\midrule
+\texttt{efm-cli zksp verify --capsule=<id>} & Verify capsule audit chain \\
+\texttt{efm-cli zksp anchor --tick=<n>} & Get anchor hash at tick \\
+\texttt{efm-cli zksp replay --from=<t1> --to=<t2>} & Forensic replay \\
+\texttt{efm-cli zksp export --capsule=<id>} & Export proof chain \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Deployment Hooks}
+
+Pre-deployment validation hooks ensure system integrity:
+
+\begin{lstlisting}[language=Python, caption={Deployment hook configuration.}]
+from efm.deploy import DeploymentHooks, ValidationResult
+
+class ProductionHooks(DeploymentHooks):
+    """Custom hooks for production deployment."""
+    
+    def pre_genesis(self, config) -> ValidationResult:
+        """Validate before Genesis ceremony."""
+        # Check all spawn conditions are configurable
+        if not config.spawn_conditions_defined():
+            return ValidationResult.FAIL("Missing spawn conditions")
+        
+        # Verify ZK-SP infrastructure
+        if not self.zksp_available():
+            return ValidationResult.FAIL("ZK-SP not initialized")
+        
+        return ValidationResult.PASS
+    
+    def post_genesis(self, root_capsule) -> ValidationResult:
+        """Validate after Genesis."""
+        # Verify Vault binding
+        if not root_capsule.vault_bound():
+            return ValidationResult.FAIL("Vault binding failed")
+        
+        # Verify d-CTM initialized
+        if not root_capsule.dctm_active():
+            return ValidationResult.FAIL("d-CTM not active")
+        
+        return ValidationResult.PASS
+    
+    def pre_spawn(self, parent, child_spec) -> ValidationResult:
+        """Validate before any spawn."""
+        # Delegate to standard spawn gate
+        return self.spawn_gate.validate(parent, child_spec)
+
+# Register hooks
+deploy = Deployment(profile=Profile.PRODUCTION)
+deploy.register_hooks(ProductionHooks())
+\end{lstlisting}
+
+%==============================================================================
+\section*{Changelog}
+%==============================================================================
+
+\textbf{v1.2} (December 2025) --- \textit{Catastrophic Failure Runbooks}
+\begin{itemize}[noitemsep]
+    \item \textbf{Runbook 1:} Arbiter unavailability procedures (\S4.4)
+    \item \textbf{Runbook 2:} d-CTM compromise response (\S4.5)
+    \item \textbf{Runbook 3:} Runaway spawn event handling (\S4.6)
+    \item \textbf{Gap 7 (Added):} Cascading failure decision tree (\S4.7)
+    \item \textbf{Added:} Partial system failure playbook (\S4.8)
+    \item 5 new operational playbooks total
+\end{itemize}
+
+\textbf{v1.0} (December 2025)
+\begin{itemize}[noitemsep]
+    \item Initial operator's guide
+    \item Core concepts and glossary
+    \item Day-to-day monitoring procedures
+    \item Response playbooks (Entropy Spike, SCI Dip, Orphan Detection)
+    \item Configuration and tuning guidance
+    \item Governance and audit requirements
+\end{itemize}
+
+\vspace{1cm}
+
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}\\[0.5cm]
+\textit{--- End of Operator's Guide ---}\\[0.3cm]
+{\small For formal definitions and proofs, see Volumes I--II.}\\
+{\small For Constitutional Kernel details, see Appendix J.}\\
+{\small For Adaptive Spawn Governance, see Appendix N.}
+\end{center}
+
+\end{document}

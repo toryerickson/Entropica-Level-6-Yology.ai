@@ -1,5 +1,147 @@
 # EFM Codex Changelog
 
+## Version 2.1 (December 2025) — Final Design Team Review Edition
+
+### Design Team Final Review — All Recommendations Implemented
+
+| Category | Enhancement | Document |
+|----------|-------------|----------|
+| **Diagrams** | Capsule lifecycle state diagram | Appendix J v2.1 |
+| **Diagrams** | Fork validation flowchart | Appendix J v2.1 |
+| **Diagrams** | SHSL sync architecture | Appendix K v1.6 |
+| **Diagrams** | Gardener interface flow | Appendix G v1.5 |
+| **Examples** | Dialect drift worked example | Worked Examples v1.0 |
+| **Examples** | Swarm arbitration walkthrough | Worked Examples v1.0 |
+| **Examples** | Forensic rollback scenario | Worked Examples v1.0 |
+| **Rationale** | τ parameter test rationale | Appendix N v1.3 |
+
+### New Documents
+
+| Document | Version | Purpose |
+|----------|---------|---------|
+| **Worked Examples** | v1.0 | Detailed walkthroughs for dialect drift, arbitration, rollback |
+
+### Updated Documents
+
+| Document | Version | Changes |
+|----------|---------|---------|
+| Appendix J | v2.1 | Capsule lifecycle diagram, fork validation flowchart |
+| Appendix K | v1.6 | SHSL sync architecture diagram |
+| Appendix G | v1.5 | Gardener interface flow diagram |
+| Appendix N | v1.3 | τ test rationale table |
+
+---
+
+## Version 2.0 (December 2025) — Developer Alignment Edition
+
+### Developer Alignment Report Fixes — All Complete
+
+| Priority | Area | Fix | Status |
+|----------|------|-----|--------|
+| 🔴 Critical | Layer Model | Standardized all layer references | ✅ |
+| 🔴 Critical | Terminology | Canonical terms + legacy mappings | ✅ |
+| 🟠 High | Appendix Links | Volume II ↔ J/K/L/M/N cross-refs | ✅ |
+| 🟠 High | Code Guidance | Implementation snippets | ✅ |
+| 🟡 Medium | Visual Aids | Arbitration flowchart, Three-Speed | ✅ |
+| 🟡 Medium | Glossary | Legacy term mappings | ✅ |
+
+### Updated Documents
+
+| Document | Version | Changes |
+|----------|---------|---------|
+| Canonical Terminology | v1.2 | Legacy term mappings (IA-BIM→SCI, TPE→ATP, etc.) |
+| Volume II | v1.5 | Appendix cross-references section |
+| Appendix J | v1.9 | Forest Layer Constitutional Rules section |
+| Appendix L | v1.5 | Arbitration flowchart diagram |
+| Appendix M | v1.5 | Three-Speed Architecture integration |
+| Operator's Guide | v1.2 | Implementation guidance (Micro-Heuristics, ZK-SP, Hooks) |
+
+### Legacy Term Mappings Added
+
+| Legacy Term | Canonical Term (v2.0) |
+|-------------|----------------------|
+| IA-BIM | Swarm Coherence Index (SCI) |
+| Cognitive Aperture | Arbiter Threshold Governor (ATG) |
+| TPE (Trajectory Prediction Engine) | Arbiter Trajectory Projection (ATP) |
+| Bridge Integrity Matrix | Swarm Coherence Index (SCI) |
+| Behavioral Signature | Micro-Signature |
+| Forest Divergence Protocol | Fork Verification |
+
+---
+
+## Version 1.9 (December 2025) — Executive Review Edition
+
+### Executive Review Fixes — All Complete
+
+| Issue ID | Description | Resolution |
+|----------|-------------|------------|
+| A-01 | Symbol tags undefined | Added FSS: tag table |
+| C-04 | ZK-SP validation abstract | Added protocol schema |
+| D-02 | Dialect chain incomplete | Added TI/BC rules |
+| H-05 | Gardener not grounded | Added Layer 2 mediation |
+| I-01 | Tier taxonomy misaligned | Added ops mode mapping |
+| J-03 | Probation path unclear | Added ATP invocation |
+
+### New Documents
+
+| Document | Version | Purpose |
+|----------|---------|---------|
+| **System Guide** | v1.0 | Consolidated operational reference |
+
+### Updated Documents
+
+| Document | Version | Changes |
+|----------|---------|---------|
+| Appendix A | v1.5 | Metadata block, FSS symbol tags |
+| Appendix C | v1.3 | ZK-SP validation protocol |
+| Appendix D | v1.2 | Trunk/branch integrity rules |
+| Appendix H | v1.3 | Layer 2 entropy mediation |
+| Appendix I | v1.8 | Ops mode alignment |
+| Appendix J | v1.8 | Probation invocation path |
+
+### Visual Update
+
+- Reversibility matrix terminology corrected in System Guide
+- "$\Delta S$ treatment" and "Micro-Heuristic deployment" added
+
+---
+
+## Version 1.8 (December 2025) — Design Team Alignment Edition
+
+### Design Team Deliverables — All Complete
+
+| Deliverable | Document | Status |
+|-------------|----------|--------|
+| Codex Map crosswalk | `efm_codex_map_v1.0.pdf` | ✅ NEW |
+| Glossary definitions | Canonical Terminology v1.1 | ✅ +22 terms |
+| Appendix F alignment | Appendix F v1.5 | ✅ Taxonomy mapped |
+| Discovery Stack FSM | Appendix M v1.4 | ✅ State machines |
+| Lifecycle diagrams | Appendix M §4.1–4.2 | ✅ Added |
+| Code snippet index | Codex Map §7 | ✅ 12 snippets |
+
+### New Documents
+
+- **Codex Map v1.0** — Complete crosswalk: Appendices ↔ Layers ↔ Tests ↔ Proofs ↔ Clauses
+
+### Updated Documents
+
+| Document | Version | Changes |
+|----------|---------|---------|
+| Canonical Terminology | v1.1 | +22 terms (Judicial, Fork, Discovery, ASG) |
+| Appendix F | v1.5 | Severity–Escalation mapping table |
+| Appendix M | v1.4 | Discovery Stack & Probe state machines |
+
+### New Terms Added to Glossary
+
+- Judicial Capsule, Lineage Fork, Fork Point, Fork Verification
+- Branch Merge, Merge Conflict, Behavioral Equivalence, Semantic Divergence
+- Discovery Stack, M-Stack, Research Probe, Probe Lifecycle
+- Hypothesis, Synthesis Engine, Discovery Budget, Novelty Score
+- Spawn Condition, Spawn Gate, ASG Calibration Cycle
+- Escalation Level, Severity–Escalation Mapping
+
+---
+
 ## Version 1.7 (December 2025) — Testing & Verification Edition
 
 ### Major Additions

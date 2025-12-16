@@ -1,0 +1,303 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============ PACKAGES ============
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\sloppy
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+
+% ============ COLORS ============
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{layer0}{rgb}{0.8,0.2,0.2}
+\definecolor{layer1}{rgb}{0.2,0.6,0.2}
+\definecolor{layer2}{rgb}{0.2,0.4,0.8}
+\definecolor{layer3}{rgb}{0.5,0.2,0.7}
+
+% ============ HEADERS ============
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{EFM System Guide}}
+\fancyhead[R]{\thepage}
+
+% ============ HYPERREF ============
+\hypersetup{
+    colorlinks=true, linkcolor=codeblue, urlcolor=cyan,
+    pdftitle={EFM System Guide},
+}
+
+% ============ DOCUMENT ============
+\title{
+    {\Large\textsc{Entropica Forensic Model}}\\[0.3cm]
+    {\LARGE\bfseries EFM System Guide}\\[0.2cm]
+    {\large Consolidated Operational Reference}\\[0.3cm]
+    {\normalsize Version 1.0}
+}
+\author{Entropica SPC --- Yology Research Division}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document consolidates operational guidance from README.md, CONTRIBUTING.md, CODE\_OF\_CONDUCT.md, and the Operator's Guide into a unified reference. It maps governance artifacts to the EFM architectural framework for seamless Clide publisher integration.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%==============================================================================
+\section{Document Purpose}
+%==============================================================================
+
+The EFM System Guide serves as the single source of truth for:
+\begin{itemize}
+    \item Operational procedures mapped to EFM layers
+    \item Contribution governance aligned with escalation pathways
+    \item Code of conduct enforcement via capsule accountability model
+    \item Quick-start deployment guidance
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Source document mapping.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Source} & \textbf{EFM Anchor} & \textbf{Guide Section} \\
+\midrule
+README.md & Architecture overview & \S2 \\
+CONTRIBUTING.md & Layer 2 (Arbiter) governance & \S3 \\
+CODE\_OF\_CONDUCT.md & Reflex-Heuristic norms & \S4 \\
+Operator's Guide & All operational layers & \S5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Architecture Quick-Start}
+%==============================================================================
+
+\subsection{Layer Model Summary}
+
+\begin{table}[h]
+\centering
+\caption{EFM layer summary for operators.}
+\begin{tabular}{@{}clll@{}}
+\toprule
+\textbf{Layer} & \textbf{Name} & \textbf{Function} & \textbf{Modifiable} \\
+\midrule
+0 & Vault & Immutable commandments & Never \\
+0.5 & Reflex-Core & Sub-10ms safety response & Never \\
+0.5+ & Reflex-Heuristic & Learned patterns & Arbiter only \\
+1 & Execution & Capsule runtime & Standard \\
+2 & Arbiter & Deliberative resolution & d-CAM quorum \\
+3--5 & Forest & Distributed evolution & Profile-dependent \\
+6 & Constitutional & Bounded self-modification & Constitutional quorum \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reversibility Principle (Updated Terminology)}
+
+\begin{tcolorbox}[colback=blue!5, colframe=codeblue, title={\textbf{The Reversibility Principle}}]
+\textit{``Autonomy is inversely proportional to irreversibility.''} --- Volume I \S5
+
+\textbf{Key Insight:} Gate actions by recoverability, not perceived danger.
+\end{tcolorbox}
+
+\begin{table}[h]
+\centering
+\caption{Reversibility matrix with corrected terminology.}
+\small
+\begin{tabular}{@{}p{2.2cm}p{3cm}p{4cm}p{3cm}@{}}
+\toprule
+\textbf{Reversibility} & \textbf{Autonomy Level} & \textbf{Examples} & \textbf{Oversight} \\
+\midrule
+\textbf{Fully Reversible} & Full Autonomy (act immediately) & $\Delta S$ treatment ($H < 0.6$), Rollback, QUARANTINE & Post-hoc notification \\
+\addlinespace
+\textbf{Partially Reversible} & Arbiter Oversight (deliberate briefly) & Reversible rollback, De-enshrinement, Judicial ruling & Post-hoc + logging, Arbiter quorum \\
+\addlinespace
+\textbf{Irreversible} & Deliberation Required (think carefully) & External API calls, Physical actuations, Micro-Heuristic deployment & Pre-action review, Arbiter deliberation \\
+\addlinespace
+\textbf{Constitutional} & Gardener Approval (human-in-loop) & PURGE, Constitutional mutation, Layer 0/6 changes & Formal approval, Constitutional quorum \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Terminology Updates (v1.8):}
+\begin{itemize}
+    \item ``Treatment (H < 0.6)'' $\rightarrow$ ``$\Delta S$ treatment ($H < 0.6$)'' --- explicit entropy reference
+    \item Added ``Micro-Heuristic deployment'' to Irreversible tier --- reflects Reflex-Heuristic update process
+\end{itemize}
+
+%==============================================================================
+\section{Contribution Governance}
+%==============================================================================
+
+\subsection{Mapping to Arbiter Layer}
+
+Contribution governance follows the Arbiter Layer (Layer 2) model:
+
+\begin{enumerate}
+    \item \textbf{Proposal Submission} $\equiv$ Escalation request
+    \item \textbf{Review Process} $\equiv$ d-CAM deliberation
+    \item \textbf{Merge Decision} $\equiv$ Arbiter verdict
+    \item \textbf{Precedent Setting} $\equiv$ Heuristic update
+\end{enumerate}
+
+\subsection{Pull Request Protocol}
+
+\begin{table}[h]
+\centering
+\caption{PR process mapped to EFM escalation.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{PR Stage} & \textbf{EFM Equivalent} & \textbf{Requirement} \\
+\midrule
+Draft PR & Level 1 (self-review) & Author validates locally \\
+Ready for Review & Level 2 (peer review) & Passes CI tests \\
+Requested Changes & Probation (monitored) & Address feedback \\
+Approved & Arbiter verdict & Quorum approval \\
+Merged & Precedent set & d-CTM logged \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Testing Requirements}
+
+All contributions MUST include:
+\begin{itemize}
+    \item Unit test definitions (per affected appendix)
+    \item Integration test scenarios (if cross-component)
+    \item Invariant specifications (if safety-critical)
+    \item Formal proof sketches (for P1--P8 changes)
+\end{itemize}
+
+%==============================================================================
+\section{Code of Conduct Enforcement}
+%==============================================================================
+
+\subsection{Mapping to Reflex-Heuristic}
+
+The Code of Conduct functions as a \textbf{social Reflex-Heuristic}:
+\begin{itemize}
+    \item Positive behaviors = Low $\Delta S$ (system stability)
+    \item Unacceptable behaviors = High $\Delta S$ (triggers escalation)
+\end{itemize}
+
+\subsection{Escalation Pathway}
+
+\begin{table}[h]
+\centering
+\caption{CoC violation escalation.}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Severity} & \textbf{Behavior} & \textbf{Response} & \textbf{EFM Equivalent} \\
+\midrule
+S1 & Minor violation & Warning & Reflex alert \\
+S2 & Repeated violation & Temporary restriction & Probation \\
+S3 & Serious violation & Suspension & Quarantine \\
+S4 & Egregious violation & Permanent ban & PURGE \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Operational Procedures}
+%==============================================================================
+
+\subsection{Deployment Checklist}
+
+Before deploying EFM capsules:
+\begin{enumerate}
+    \item Select deployment profile (Appendix I)
+    \item Verify spawn parameters within profile limits
+    \item Configure Gardener notification thresholds
+    \item Execute \texttt{efm-cli profile validate}
+    \item Initialize Genesis ceremony (Appendix J \S3)
+\end{enumerate}
+
+\subsection{Emergency Procedures}
+
+\begin{tcolorbox}[colback=red!5, colframe=red!70, title={\textbf{Catastrophic Event Response}}]
+See Operator's Guide \S7 for detailed runbooks:
+\begin{enumerate}
+    \item \textbf{Cascading Failure}: Spawn cascade halt $\rightarrow$ ASG emergency ceiling
+    \item \textbf{d-CTM Corruption}: Read-only mode $\rightarrow$ Branch replay
+    \item \textbf{ZK-SP Chain Break}: Halt affected trunk $\rightarrow$ Forensic reconstruction
+    \item \textbf{Gardener Unavailable}: Dead Hand Protocol $\rightarrow$ Automatic safe mode
+\end{enumerate}
+\end{tcolorbox}
+
+\subsection{Monitoring Integration}
+
+\begin{table}[h]
+\centering
+\caption{Key metrics for operational monitoring.}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Metric} & \textbf{Source} & \textbf{Threshold} & \textbf{Alert Level} \\
+\midrule
+$\Delta S$ (entropy) & Telemetry (App H) & $\geq \tau$ (default 0.7) & S2 \\
+SCI (coherence) & SHSL (App K) & $< 0.7$ & S2 \\
+DDI (drift) & Forest (Vol II) & $> 0.4$ & S2 \\
+Spawn rate & ASG (App N) & $> R_{max}$ & S3 \\
+d-CTM latency & Forensic (App A) & $> 1000$ ticks & S1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Cross-Reference Index}
+%==============================================================================
+
+\begin{longtable}{@{}lll@{}}
+\toprule
+\textbf{Topic} & \textbf{Primary Source} & \textbf{Appendix} \\
+\midrule
+\endhead
+Capsule lifecycle & Volume I \S2 & A \\
+Reflex Engine & Volume I \S3 & F \\
+Entropy ($\Delta S$) & Volume I \S3.3 & H \\
+Arbiter Layer & Volume II \S2 & L \\
+Forest Layer & Volume II \S3 & K, M \\
+Spawn Governance & Volume I \S4 & N \\
+Constitutional Kernel & Appendix J & J \\
+Deployment Profiles & Appendix I & I \\
+Gardener Interface & Appendix G & G \\
+ZK-SP Proofs & Appendix E & E \\
+Testing Framework & Testing Framework & C \\
+\bottomrule
+\caption{Topic cross-reference index.}
+\end{longtable}
+
+%==============================================================================
+\section*{Version History}
+%==============================================================================
+
+\textbf{v1.0} (December 2025)
+\begin{itemize}[noitemsep]
+    \item Initial consolidated system guide
+    \item Integrated README, CONTRIBUTING, CODE\_OF\_CONDUCT
+    \item Updated reversibility matrix terminology
+    \item Added EFM architectural mappings
+\end{itemize}
+
+\vspace{1cm}
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}\\[0.5cm]
+\textit{Entropica SPC --- Yology Research Division}\\
+\textit{December 2025}
+\end{center}
+
+\end{document}

@@ -1,9 +1,22 @@
 # Entropica Forensic Model (EFM) Codex
 
-**Version:** 1.7 | **Status:** Publication Ready | **License:** Proprietary
+**Version:** 2.1 | **Status:** Publication Ready | **License:** Proprietary
 
 > *"Autonomy is inversely proportional to irreversibility."*  
 > — The Reversibility Principle, Volume I §5
+
+---
+
+## Quick Links
+
+| Resource | Description |
+|----------|-------------|
+| 📄 **[Complete Index](pdf/efm_codex_index.pdf)** | Full architecture overview |
+| 🗺️ **[Codex Map](pdf/efm_codex_map_v1.0.pdf)** | Appendix ↔ Layer ↔ Test crosswalk |
+| 📖 **[Canonical Terminology](pdf/efm_canonical_terminology.pdf)** | Authoritative definitions |
+| 🔧 **[Operator's Guide](pdf/efm_operators_guide_v1.2.pdf)** | Deployment & operations |
+| 🧪 **[Testing Framework](pdf/efm_testing_framework_v1.0.pdf)** | 182 tests, 46 proofs |
+| 📚 **[Worked Examples](pdf/efm_worked_examples_v1.0.pdf)** | Dialect drift, arbitration, rollback |
 
 ---
 
@@ -18,23 +31,39 @@ The **Entropica Forensic Model (EFM)** is a comprehensive framework for building
 - **Bounded autonomous decision-making** (Level 6 autonomy)
 - **Evolutionary self-improvement** (Discovery Stack feedback loops)
 - **Comprehensive testing framework** (182 tests, 46 formal proofs)
-
-📄 **[View Complete Index & Architecture](pdf/efm_codex_index.pdf)**
+- **Full traceability** (v1.8 — Codex Map crosswalk)
+- **Executive review compliance** (v1.9 — All QA issues resolved)
+- **Terminology standardization** (v2.0 — Legacy mappings, layer consistency)
+- **Visual architecture guides** (v2.1 — Lifecycle, fork, SHSL, Gardener diagrams)
 
 ---
 
-## 🆕 v1.7: Adaptive Spawn Governance & Testing Framework
+## 🆕 v2.1: Final Design Team Review Edition
 
-Version 1.7 introduces **Adaptive Spawn Governance (ASG)** and a comprehensive **Testing Framework**.
+Version 2.1 implements all remaining recommendations from the design team's final review.
 
-### Key Additions
+### New Visual Elements
 
-| Feature | Document | Description |
-|---------|----------|-------------|
-| **Adaptive Spawn Governance** | Appendix N | Self-tuning spawn parameters based on swarm health |
-| **Fork Safety Verification** | Appendix J §14 | Behavioral equivalence testing for forked branches |
-| **Catastrophic Runbooks** | Operator Guide | Cascading failure response procedures |
-| **Testing Framework** | Testing Framework | 182 tests, 46 proofs, 66 invariants |
+| Diagram | Location | Purpose |
+|---------|----------|---------|
+| **Capsule Lifecycle** | Appendix J v2.1 | State transitions under Constitutional governance |
+| **Fork Validation** | Appendix J v2.1 | Decision flow for dialect divergence |
+| **SHSL Sync** | Appendix K v1.6 | Health aggregation and ASG feedback |
+| **Gardener Interface** | Appendix G v1.5 | Authentication and data flow |
+
+### Worked Examples (NEW)
+
+| Scenario | Description |
+|----------|-------------|
+| **Dialect Drift** | Complete fork decision walkthrough (DDI threshold → evaluation → execution) |
+| **Swarm Arbitration** | Judicial Swarm formation and deliberation for resource dispute |
+| **Forensic Rollback** | Capsule corruption detection, rollback decision, execution |
+
+### Enhanced Test Rationale
+
+| Parameter | Enhancement |
+|-----------|-------------|
+| **τ (spawn threshold)** | Added rationale table explaining 0.05↑/0.02↓ asymmetry (Appendix N v1.3) |
 
 ### Testing Coverage Summary
 
@@ -168,30 +197,40 @@ Version 1.7 introduces **Adaptive Spawn Governance (ASG)** and a comprehensive *
 
 | App | Title | Version | Tests | Description |
 |-----|-------|---------|-------|-------------|
-| [A](pdf/efm_appendix_a_v1.4.pdf) | Forensic State | v1.4 | 6 | Capsule integrity, rollback |
+| [A](pdf/efm_appendix_a_v1.5.pdf) | Forensic State | v1.5 | 6 | Capsule integrity, rollback, FSS tags |
 | [B](pdf/efm_appendix_b_v1.1.pdf) | Lexicore Runtime | v1.1 | 8 | Execution environment |
-| [C](pdf/efm_appendix_c_v1.2.pdf) | Simulation Harness | v1.2 | 24 | Testing infrastructure |
-| [D](pdf/efm_appendix_d_v1.1.pdf) | DEL Protocol | v1.1 | 6 | Communication protocol |
+| [C](pdf/efm_appendix_c_v1.3.pdf) | Simulation Harness | v1.3 | 24 | Testing infra, ZK-SP validation |
+| [D](pdf/efm_appendix_d_v1.2.pdf) | DEL Protocol | v1.2 | 6 | Communication, trunk/branch rules |
 | [E](pdf/efm_appendix_e_v1.3.pdf) | ZK-SP Proofs | v1.3 | 15 | Cryptographic proofs |
-| [F](pdf/efm_appendix_f_v1.4.pdf) | Escalation Protocol | v1.4 | 10 | Anomaly classification |
-| [G](pdf/efm_appendix_g_v1.3.pdf) | Gardener Interface | v1.3 | 8 | Human oversight |
-| [H](pdf/efm_appendix_h_v1.2.pdf) | Telemetry | v1.2 | 8 | Monitoring systems |
-| [I](pdf/efm_appendix_i_v1.7.pdf) | Deployment Profiles | **v1.7** | 6 | Spawn parameters |
-| [J](pdf/efm_appendix_j_v1.7.pdf) | Constitutional Kernel | **v1.7** | 18 | Four Commandments, Fork Verification |
-| [K](pdf/efm_appendix_k_v1.4.pdf) | SHSL | v1.4 | 10 | Swarm health |
-| [L](pdf/efm_appendix_l_v1.4.pdf) | Judicial Swarms | v1.4 | 12 | Precedent system |
-| [M](pdf/efm_appendix_m_v1.3.pdf) | Discovery Stack | v1.3 | 8 | Feedback loop |
-| [N](pdf/efm_appendix_n_v1.2.pdf) | **Adaptive Spawn Gov.** | **v1.2** | **23** | ASG self-tuning |
+| [F](pdf/efm_appendix_f_v1.5.pdf) | Escalation Protocol | v1.5 | 10 | Anomaly classification, severity mapping |
+| [G](pdf/efm_appendix_g_v1.5.pdf) | Gardener Interface | **v1.5** | 8 | Interface flow diagram |
+| [H](pdf/efm_appendix_h_v1.3.pdf) | Telemetry | v1.3 | 8 | Monitoring, Layer 2 mediation |
+| [I](pdf/efm_appendix_i_v1.8.pdf) | Deployment Profiles | v1.8 | 6 | Spawn params, ops mode alignment |
+| [J](pdf/efm_appendix_j_v2.1.pdf) | Constitutional Kernel | **v2.1** | 18 | Lifecycle diagram, fork validation |
+| [K](pdf/efm_appendix_k_v1.6.pdf) | SHSL | **v1.6** | 10 | SHSL sync diagram |
+| [L](pdf/efm_appendix_l_v1.5.pdf) | Judicial Swarms | v1.5 | 12 | Arbitration flowchart, precedent |
+| [M](pdf/efm_appendix_m_v1.5.pdf) | Discovery Stack | v1.5 | 8 | Three-Speed, state machines |
+| [N](pdf/efm_appendix_n_v1.3.pdf) | Adaptive Spawn Gov. | **v1.3** | 23 | τ test rationale |
 
 ### Reference Documents
 
 | Document | Version | Description |
 |----------|---------|-------------|
-| [Canonical Terminology](pdf/efm_canonical_terminology.pdf) | v1.0 | Authoritative definitions |
-| [Operator's Guide](pdf/efm_operators_guide_v1.1.pdf) | **v1.1** | Deployment & runbooks |
-| [Testing Framework](pdf/efm_testing_framework_v1.0.pdf) | **v1.0** | Comprehensive test suite |
+| [Codex Map](pdf/efm_codex_map_v1.0.pdf) | v1.0 | Crosswalk: Appendix ↔ Layer ↔ Test ↔ Proof |
+| [System Guide](pdf/efm_sysguide_v1.0.pdf) | v1.0 | Consolidated operational reference |
+| [Canonical Terminology](pdf/efm_canonical_terminology.pdf) | v1.2 | Definitions + legacy mappings |
+| [Operator's Guide](pdf/efm_operators_guide_v1.2.pdf) | v1.2 | Deployment, runbooks, implementation |
+| [Testing Framework](pdf/efm_testing_framework_v1.0.pdf) | v1.0 | 182 tests, 46 proofs, 66 invariants |
+| [Worked Examples](pdf/efm_worked_examples_v1.0.pdf) | **v1.0** | Dialect drift, arbitration, rollback |
 | [Cover](pdf/efm_codex_cover.pdf) | v1.0 | Publication cover |
 | [Index](pdf/efm_codex_index.pdf) | v1.0 | Complete architecture index |
+
+### Core Volumes
+
+| Volume | Version | Description |
+|--------|---------|-------------|
+| [Volume I](pdf/efm_codex_volume_1_v1.6.pdf) | v1.6 | Capsule architecture, Reflex Engine, spawn governance |
+| [Volume II](pdf/efm_codex_volume_2_v1.5.pdf) | v1.5 | Swarm governance, appendix cross-refs |
 
 ---
 

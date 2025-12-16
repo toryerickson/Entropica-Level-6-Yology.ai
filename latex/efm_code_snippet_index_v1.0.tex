@@ -1,0 +1,282 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray},
+    breaklines=true, frame=single, numbers=left, numbersep=5pt
+}
+\lstset{style=pythonstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{EFM Code Snippet Index}}
+\fancyhead[R]{\thepage}
+
+\hypersetup{colorlinks=true, linkcolor=codeblue, urlcolor=cyan}
+
+\title{
+    {\Large\textsc{Entropica Forensic Model}}\\[0.3cm]
+    {\LARGE\bfseries Code Snippet Index}\\[0.2cm]
+    {\large Unified Reference Implementation Examples}\\[0.3cm]
+    {\normalsize Version 1.0}
+}
+\author{Entropica SPC --- Yology Research Division}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document consolidates all code snippets from the EFM Codex into a single reference index. Each snippet is tagged by source document, layer applicability, and functional category for easy navigation.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%==============================================================================
+\section{Index by Category}
+%==============================================================================
+
+\begin{longtable}{@{}p{4cm}p{3cm}p{2cm}p{4cm}@{}}
+\toprule
+\textbf{Snippet} & \textbf{Source} & \textbf{Layer} & \textbf{Function} \\
+\midrule
+\endhead
+
+\multicolumn{4}{l}{\textbf{Capsule Lifecycle}} \\
+\midrule
+\texttt{spawn\_capsule()} & Vol I \S4 & L1 & Capsule creation \\
+\texttt{validate\_spawn()} & Appendix N & L1--L2 & Spawn gate validation \\
+\texttt{terminate\_capsule()} & Vol I \S4.5 & L1 & Capsule termination \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Reflex Engine}} \\
+\midrule
+\texttt{reflex\_check()} & Vol I \S3 & L0.5 & Core safety check \\
+\texttt{compute\_delta\_s()} & Vol I \S3.3 & L0.5 & Entropy computation \\
+\texttt{MicroHeuristic} class & Ops Guide \S8.1 & L0.5+ & Heuristic deployment \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Arbiter Layer}} \\
+\midrule
+\texttt{d\_cam\_vote()} & Vol II \S2.4 & L2 & Quorum voting \\
+\texttt{atp\_project()} & Vol II \S2.5 & L2 & Trajectory projection \\
+\texttt{probation\_check()} & Vol II \S2.8 & L2 & Probation protocol \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Forest Layer}} \\
+\midrule
+\texttt{compute\_sci()} & Appendix K & L3 & Swarm coherence \\
+\texttt{compute\_ddi()} & Appendix K & L3 & Dialect distance \\
+\texttt{authorize\_fork()} & Appendix J \S6 & L3--L6 & Fork authorization \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Forensic Infrastructure}} \\
+\midrule
+\texttt{ForensicSnapshot} & Appendix A & L1 & State serialization \\
+\texttt{authorize\_rollback()} & Appendix A & L1--L6 & Rollback authorization \\
+\texttt{ZKSPVerifier} & Appendix E & All & Proof verification \\
+\texttt{ZKSPValidationConfig} & Appendix C & All & Validation config \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Governance}} \\
+\midrule
+\texttt{GardenerOverride} & Vol II \S2.10 & L4--L5 & Human override \\
+\texttt{JudicialSwarm} & Appendix L & L2--L3 & Distributed arbitration \\
+\texttt{ConstitutionalMutation} & Appendix J & L6 & Schema mutation \\
+\addlinespace
+
+\multicolumn{4}{l}{\textbf{Deployment}} \\
+\midrule
+\texttt{DeploymentHooks} & Ops Guide \S8.3 & All & Deployment validation \\
+\texttt{ProfileValidator} & Appendix I & All & Profile validation \\
+
+\bottomrule
+\caption{Code snippet index by category.}
+\end{longtable}
+
+%==============================================================================
+\section{Core Snippets}
+%==============================================================================
+
+\subsection{Entropy Computation (Layer 0.5)}
+
+\begin{lstlisting}[language=Python, caption={Behavioral entropy computation (Vol I \S3.3).}]
+def compute_delta_s(capsule: Capsule, 
+                     prev_state: State, 
+                     curr_state: State) -> float:
+    """Compute behavioral entropy delta between states."""
+    
+    # Extract behavioral signatures
+    prev_sig = extract_micro_signature(prev_state)
+    curr_sig = extract_micro_signature(curr_state)
+    
+    # Compute normalized distance
+    distance = hamming_distance(prev_sig, curr_sig)
+    normalized = distance / len(prev_sig)
+    
+    # Apply role-specific weighting
+    weight = capsule.role.entropy_weight
+    delta_s = normalized * weight
+    
+    return min(delta_s, 1.0)  # Clamp to [0, 1]
+\end{lstlisting}
+
+\subsection{Spawn Validation (Layer 1--2)}
+
+\begin{lstlisting}[language=Python, caption={Spawn gate validation (Appendix N).}]
+def validate_spawn(parent: Capsule, 
+                   child_spec: CapsuleSpec) -> SpawnDecision:
+    """Validate spawn against all six conditions."""
+    
+    # S1: Health threshold
+    if parent.health < tau_spawn:
+        return SpawnDecision.REJECT_HEALTH
+    
+    # S2: Depth limit
+    if parent.depth >= D_max:
+        return SpawnDecision.REJECT_DEPTH
+    
+    # S3: Global rate limit
+    if global_spawn_rate() >= R_max:
+        return SpawnDecision.REJECT_RATE_GLOBAL
+    
+    # S4: Local rate limit
+    if parent.local_spawn_rate() >= R_local:
+        return SpawnDecision.REJECT_RATE_LOCAL
+    
+    # S5: Vault capacity
+    if vault_usage() >= V_max:
+        return SpawnDecision.REJECT_VAULT
+    
+    # S6: Arbiter approval (if required by role)
+    if child_spec.requires_arbiter:
+        if not arbiter_approved(parent, child_spec):
+            return SpawnDecision.REJECT_ARBITER
+    
+    return SpawnDecision.APPROVED
+\end{lstlisting}
+
+\subsection{Swarm Coherence Index (Layer 3)}
+
+\begin{lstlisting}[language=Python, caption={SCI computation (Appendix K).}]
+def compute_sci(swarm: Swarm) -> float:
+    """Compute Swarm Coherence Index."""
+    
+    if len(swarm.capsules) == 0:
+        return 1.0  # Empty swarm is trivially coherent
+    
+    # Aggregate entropy deltas
+    total_delta_s = sum(c.delta_s for c in swarm.capsules)
+    mean_delta_s = total_delta_s / len(swarm.capsules)
+    
+    # SCI is inverse of mean entropy
+    sci = 1.0 - mean_delta_s
+    
+    return max(0.0, min(1.0, sci))  # Clamp to [0, 1]
+\end{lstlisting}
+
+\subsection{ZK-SP Verification (All Layers)}
+
+\begin{lstlisting}[language=Python, caption={Proof chain verification (Appendix E).}]
+class ZKSPVerifier:
+    """Zero-Knowledge Safety Proof verifier."""
+    
+    def verify_chain(self, path: AuditPath) -> VerifyResult:
+        """Verify complete proof chain."""
+        
+        for i, proof in enumerate(path.proofs):
+            # Verify individual proof
+            if not self._verify_proof(proof):
+                return VerifyResult(
+                    valid=False, 
+                    break_index=i,
+                    reason="proof_invalid"
+                )
+            
+            # Verify chain link
+            if i > 0:
+                expected_hash = path.proofs[i-1].next_hash
+                if proof.prev_hash != expected_hash:
+                    return VerifyResult(
+                        valid=False,
+                        break_index=i,
+                        reason="chain_break"
+                    )
+        
+        return VerifyResult(valid=True)
+    
+    def _verify_proof(self, proof: ZKSPProof) -> bool:
+        """Verify single ZK-SP proof."""
+        return zksp_crypto.verify(
+            proof.commitment,
+            proof.response,
+            proof.constraint_hash
+        )
+\end{lstlisting}
+
+%==============================================================================
+\section{Index by Source Document}
+%==============================================================================
+
+\begin{longtable}{@{}lp{8cm}@{}}
+\toprule
+\textbf{Source} & \textbf{Snippets Included} \\
+\midrule
+\endhead
+
+Volume I & \texttt{spawn\_capsule}, \texttt{compute\_delta\_s}, \texttt{reflex\_check}, \texttt{terminate\_capsule} \\
+\addlinespace
+Volume II & \texttt{d\_cam\_vote}, \texttt{atp\_project}, \texttt{probation\_check}, \texttt{GardenerOverride} \\
+\addlinespace
+Appendix A & \texttt{ForensicSnapshot}, \texttt{authorize\_rollback}, \texttt{replay\_state} \\
+\addlinespace
+Appendix C & \texttt{ZKSPValidationConfig}, \texttt{SimulationHarness} \\
+\addlinespace
+Appendix E & \texttt{ZKSPVerifier}, \texttt{generate\_proof}, \texttt{heartbeat} \\
+\addlinespace
+Appendix J & \texttt{authorize\_fork}, \texttt{validate\_mutation}, \texttt{genesis\_ceremony} \\
+\addlinespace
+Appendix K & \texttt{compute\_sci}, \texttt{compute\_ddi}, \texttt{shsl\_auto\_treat} \\
+\addlinespace
+Appendix L & \texttt{JudicialSwarm}, \texttt{form\_quorum}, \texttt{resolve\_dispute} \\
+\addlinespace
+Appendix M & \texttt{DiscoveryEvent}, \texttt{classify\_anomaly}, \texttt{enshrine\_heuristic} \\
+\addlinespace
+Appendix N & \texttt{validate\_spawn}, \texttt{asg\_calibrate}, \texttt{tau\_adjust} \\
+\addlinespace
+Ops Guide & \texttt{MicroHeuristic}, \texttt{DeploymentHooks}, CLI commands \\
+
+\bottomrule
+\caption{Code snippets by source document.}
+\end{longtable}
+
+%==============================================================================
+\section*{Version History}
+%==============================================================================
+
+\textbf{v1.0} (December 2025)
+\begin{itemize}
+    \item Initial code snippet index
+    \item 25+ core snippets indexed
+    \item Cross-referenced by category, layer, and source
+\end{itemize}
+
+\end{document}

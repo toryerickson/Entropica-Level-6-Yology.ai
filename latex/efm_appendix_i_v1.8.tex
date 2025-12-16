@@ -1,0 +1,223 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+\definecolor{spawnbg}{rgb}{0.95,0.95,0.98}
+\definecolor{spawnborder}{rgb}{0.3,0.3,0.7}
+\newtcolorbox{spawnbox}{colback=spawnbg, colframe=spawnborder, boxrule=1pt, title=Spawn Parameters}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{EFM Codex}
+\fancyhead[R]{Appendix I v1.6}
+\fancyfoot[C]{\thepage}
+
+\title{
+    {\Large\textsc{Entropica Forensic Model --- Appendix I}}\\[0.3cm]
+    {\LARGE\bfseries Deployment Profiles}\\[0.2cm]
+    {\large Layer Activation and Spawn Governance}\\[0.3cm]
+    {\normalsize Version 1.7}
+}
+\author{Yology Research Division\\Entropica SPC}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Appendix I defines deployment profiles configuring EFM layer activation and spawn governance parameters. Version 1.6 adds comprehensive Spawn Parameters for each profile.
+\end{abstract}
+
+%==============================================================================
+% APPENDIX METADATA BLOCK (v1.8+)
+%==============================================================================
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Metadata Field} & \textbf{Value} \\
+\midrule
+\textbf{Layer(s) Affected} & All Layers (configuration-dependent) \\
+\textbf{System Function} & Deployment Configuration, Spawn Governance, Autonomy Levels \\
+\textbf{Cross-Booklet Anchor} & Booklet 3 \S2.1 (Deployment), Booklet 4 \S5.2 (Scaling) \\
+\textbf{Primary Properties} & P2 (Spawn Boundedness), P6 (Capsule Liveness) \\
+\textbf{Test Coverage} & I-1 to I-6 (6 tests) \\
+\bottomrule
+\end{tabular}
+\caption{Appendix I metadata for cross-reference traceability.}
+\end{table}
+
+%==============================================================================
+% OPS MODE ALIGNMENT (I-01 Fix)
+%==============================================================================
+\begin{table}[h]
+\centering
+\small
+\caption{Deployment Profile to Operator Guide Mode Alignment.}
+\begin{tabular}{@{}lllp{5cm}@{}}
+\toprule
+\textbf{Profile} & \textbf{Ops Mode} & \textbf{Guide Ref} & \textbf{Notes} \\
+\midrule
+Minimal & SANDBOX & \S2.1 & Development/testing, full Gardener supervision \\
+Standard & PRODUCTION & \S3.1 & Production workloads, CRITICAL alerts only \\
+Swarm & DISTRIBUTED & \S4.1 & Multi-trunk deployment, cross-forest coordination \\
+Research & RESEARCH & \S2.3 & Hypothesis testing, Discovery Stack enabled \\
+Constitutional & GOVERNANCE & \S5.1 & Level 6 autonomy, bounded self-modification \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{tcolorbox}[colback=yellow!10, colframe=orange!70, title={\textbf{Ops Mode Cross-Reference (Operator Guide Harmonization)}}]
+\textbf{Mode Transitions:} When transitioning between ops modes (e.g., SANDBOX $\rightarrow$ PRODUCTION), operators MUST follow the checklist in Operator Guide \S6.2:
+\begin{enumerate}
+    \item Verify all spawn conditions (S$_1$--S$_6$) pass under new profile limits
+    \item Confirm ASG parameters are within new profile bounds
+    \item Update Gardener notification thresholds per new mode
+    \item Execute \texttt{efm-cli profile validate --target=<mode>} before cutover
+\end{enumerate}
+
+\textbf{Emergency Mode:} During catastrophic events (Operator Guide \S7), the system MAY temporarily downgrade to Minimal profile regardless of current ops mode. This is the only mode transition that does not require explicit operator approval.
+\end{tcolorbox}
+
+\tableofcontents
+\newpage
+
+\section{Profile Summary}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Minimal} & \textbf{Standard} & \textbf{Swarm} & \textbf{Research} & \textbf{Constitutional} \\
+\midrule
+Layers & 0--1 & 0--2 & 0--5 & 0--2,M & 0--6 \\
+Autonomy & 2 & 4 & 5 & 5 & 6 \\
+$\tau_{spawn}$ & 0.9 & 0.7 & 0.6 & 0.65 & 0.7 \\
+$D_{max}$ & 3 & 10 & 15 & 8 & 10 \\
+$R_{max}$ & 10 & 100 & 500 & 200 & 100 \\
+$R_{local}$ & 2 & 10 & 50 & 30 & 10 \\
+$V_{max}$ & 50 & 1000 & 5000 & 2000 & 1000 \\
+\bottomrule
+\end{tabular}
+\caption{Spawn parameters by deployment profile.}
+\end{table}
+
+\section{Profile Details}
+
+\subsection{Minimal (Research/Sandbox)}
+\begin{itemize}
+    \item Active Layers: 0, 0.5, 1
+    \item Autonomy Level: 2 (Low)
+    \item Gardener: Always required
+    \item Spawn: Explicit authorization only, very restricted
+\end{itemize}
+
+\subsection{Standard (Production)}
+\begin{itemize}
+    \item Active Layers: 0, 0.5, 1, 2
+    \item Autonomy Level: 4 (Moderate)
+    \item Gardener: CRITICAL events only
+    \item Spawn: Task-based, Arbiter validates
+\end{itemize}
+
+\subsection{Swarm (Distributed)}
+\begin{itemize}
+    \item Active Layers: 0--5 (Full Forest)
+    \item Autonomy Level: 5 (High)
+    \item Gardener: Constitutional changes only
+    \item Spawn: Swarm consensus, high throughput
+\end{itemize}
+
+\subsection{Research (Probe/Exploration)}
+\begin{itemize}
+    \item Active Layers: 0--2, Discovery Stack (M)
+    \item Autonomy Level: 5 (High)
+    \item Gardener: Constitutional changes only
+    \item Spawn: Discovery-driven, ephemeral probes
+\end{itemize}
+
+\subsection{Constitutional (Full Governance)}
+\begin{itemize}
+    \item Active Layers: 0--6 (All)
+    \item Autonomy Level: 6 (Bounded)
+    \item Gardener: Layer 0/6 changes only
+    \item Spawn: Constitutional validation
+\end{itemize}
+
+\section{Spawn Condition Customization}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Condition} & \textbf{Standard} & \textbf{Swarm} & \textbf{Research} \\
+\midrule
+$S_1$ (Task) & Explicit task & Swarm consensus & Discovery novelty \\
+$S_2$ (Resources) & Parent alloc & Pooled Vault & Exploration budget \\
+$S_3$ (Health) & $H \geq 0.7$ & $H \geq 0.6$ & $H \geq 0.65$ \\
+$S_4$ (Depth) & $d < 10$ & $d < 15$ & $d < 8$ \\
+$S_5$ (Rate) & Per-parent & Coordinator elevated & Burst allowed \\
+$S_6$ (Integrity) & No ANOMALY & Swarm health & Probe isolation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Testing and Validation}
+
+\subsection{Profile Validation Tests}
+
+Each deployment profile must pass validation before use:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}clp{5cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} \\
+\midrule
+I-1 & Parameter bounds & All spawn parameters within valid ranges \\
+I-2 & Layer consistency & Active layers match profile spec \\
+I-3 & Autonomy enforcement & Autonomy level correctly restricts operations \\
+I-4 & Gardener triggers & Correct events trigger Gardener notification \\
+I-5 & Cross-profile isolation & Profile change requires restart \\
+I-6 & Default selection & System selects appropriate default profile \\
+\bottomrule
+\end{tabular}
+\caption{Profile validation test suite.}
+\end{table}
+
+\subsection{Spawn Parameter Invariants}
+
+\begin{enumerate}
+    \item \textbf{Bound Invariant:} $\forall$ profile $P$: $\tau_{spawn}^{min} \leq \tau_{spawn} \leq \tau_{spawn}^{max}$
+    \item \textbf{Depth Invariant:} $\forall$ capsule $C$: $depth(C) \leq D_{max}(profile)$
+    \item \textbf{Rate Invariant:} $\forall t$: $R(t) \leq R_{max}(profile)$
+    \item \textbf{Vault Invariant:} $\forall t$: $V_{used}(t) \leq V_{max}(profile)$
+\end{enumerate}
+
+\subsection{Profile Transition Testing}
+
+When transitioning between profiles (e.g., SANDBOX $\rightarrow$ PRODUCTION):
+
+\begin{enumerate}
+    \item Verify all capsules respect new bounds
+    \item Verify ASG parameters within new profile limits
+    \item Verify Gardener notification triggers updated
+    \item Verify active layers match new profile
+\end{enumerate}
+
+\section*{Changelog}
+\textbf{v1.8} --- Added Testing and Validation section, profile invariants\\
+\textbf{v1.6} --- Added Spawn Governance Parameters, Research profile\\
+\textbf{v1.5} --- Layer activation matrix, autonomy levels
+
+\end{document}
