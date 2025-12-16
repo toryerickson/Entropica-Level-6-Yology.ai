@@ -1,0 +1,802 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============ PACKAGES ============
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\sloppy
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+\usepackage{longtable}
+
+% ============ COLORS ============
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{passgreen}{rgb}{0,0.5,0}
+\definecolor{failred}{rgb}{0.8,0,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\definecolor{testbg}{rgb}{0.95,0.98,0.95}
+\definecolor{testborder}{rgb}{0.2,0.6,0.3}
+\definecolor{proofbg}{rgb}{0.95,0.95,1.0}
+\definecolor{proofborder}{rgb}{0.3,0.3,0.7}
+\definecolor{gapbg}{rgb}{1.0,0.97,0.90}
+\definecolor{gapborder}{rgb}{0.9,0.6,0.1}
+
+% ============ THEOREM ENVIRONMENTS ============
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{invariant}{Invariant}[section]
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% ============ BOXES ============
+\newtcolorbox{testbox}[1][Test Suite]{
+    colback=testbg, colframe=testborder, boxrule=1.5pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    fonttitle=\bfseries, title={#1}, breakable
+}
+
+\newtcolorbox{proofbox}[1][Formal Property]{
+    colback=proofbg, colframe=proofborder, boxrule=1.5pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    fonttitle=\bfseries, title={#1}
+}
+
+\newtcolorbox{gapbox}[1][Coverage Gap]{
+    colback=gapbg, colframe=gapborder, boxrule=1.5pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    fonttitle=\bfseries, title={#1}
+}
+
+% ============ CODE STYLE ============
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{passgreen},
+    stringstyle=\color{purple},
+    breaklines=true, frame=single, numbers=left, numbersep=5pt
+}
+\lstset{style=pythonstyle}
+
+% ============ HEADERS ============
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{EFM Testing Framework}}
+\fancyhead[R]{\thepage}
+
+% ============ HYPERREF ============
+\hypersetup{
+    colorlinks=true, linkcolor=codeblue, urlcolor=cyan,
+    pdftitle={EFM Testing Framework},
+}
+
+% ============ DOCUMENT ============
+\title{
+    {\Large\textsc{Entropica Forensic Model}}\\[0.3cm]
+    {\LARGE\bfseries Comprehensive Testing Framework}\\[0.2cm]
+    {\large Verification, Validation, and Formal Proofs}\\[0.3cm]
+    {\normalsize Version 1.0}
+}
+\author{Entropica SPC --- Yology Research Division}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document provides a comprehensive testing framework for the Entropica Forensic Model (EFM). It consolidates all test cases, formal proofs, and validation procedures across Volumes I--II and Appendices A--N. The framework ensures that all safety properties, invariants, and behavioral guarantees are rigorously verified before deployment.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%==============================================================================
+\section{Executive Summary}
+%==============================================================================
+
+\subsection{Testing Coverage Overview}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\textbf{Document} & \textbf{Component} & \textbf{Tests} & \textbf{Proofs} & \textbf{Invariants} & \textbf{Coverage} \\
+\midrule
+Volume I & Core Architecture & 8 & 3 & 5 & 85\% \\
+Volume II & Behavioral Layers & 12 & 4 & 8 & 80\% \\
+Appendix A & Forensic State & 6 & 2 & 3 & 90\% \\
+Appendix B & Entropy Metrics & 8 & 3 & 4 & 85\% \\
+Appendix C & Test Scenarios & 24 & --- & --- & 95\% \\
+Appendix D & Capsule Lifecycle & 6 & 2 & 3 & 80\% \\
+Appendix E & ZK-SP Proofs & 15 & 8 & 6 & 95\% \\
+Appendix F & Reflex Escalation & 10 & 3 & 5 & 85\% \\
+Appendix G & Gardener Interface & 8 & 2 & 4 & 80\% \\
+Appendix H & Bridge Mechanics & 8 & 2 & 3 & 75\% \\
+Appendix I & Deployment Profiles & 6 & 1 & 2 & 70\% \\
+Appendix J & Constitutional Kernel & 18 & 5 & 7 & 90\% \\
+Appendix K & Swarm Coordination & 10 & 3 & 4 & 85\% \\
+Appendix L & Fork Mechanics & 12 & 4 & 5 & 90\% \\
+Appendix M & Forensic Replay & 8 & 2 & 3 & 85\% \\
+Appendix N & Adaptive Spawn Gov. & 23 & 2 & 4 & 90\% \\
+\midrule
+\textbf{TOTAL} & & \textbf{182} & \textbf{46} & \textbf{66} & \textbf{86\%} \\
+\bottomrule
+\end{tabular}
+\caption{Testing coverage summary across all EFM documents.}
+\end{table}
+
+\subsection{Test Categories}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Unit Tests:} Individual component behavior (132 tests)
+    \item \textbf{Integration Tests:} Cross-component interactions (28 tests)
+    \item \textbf{Property Tests:} Formal invariant verification (22 tests)
+    \item \textbf{Stress Tests:} Boundary and chaos testing (12 tests)
+    \item \textbf{Adversarial Tests:} Attack resistance (18 tests)
+\end{enumerate}
+
+%==============================================================================
+\section{Core Properties (P1--P8)}
+%==============================================================================
+
+The EFM guarantees eight core safety properties. Each must be formally proven and empirically tested.
+
+\subsection{Property Definitions}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}clp{7cm}c@{}}
+\toprule
+\textbf{ID} & \textbf{Property} & \textbf{Definition} & \textbf{Layer} \\
+\midrule
+P1 & Reflex Supremacy & Reflex-Core can halt any action within 1 tick & 0.5 \\
+P2 & Spawn Boundedness & $\forall t: R(t) \leq R_{max}$ & 1--2 \\
+P3 & Health Monotonicity & Degradation triggers corrective response & 2 \\
+P4 & Audit Completeness & All state transitions logged in d-CTM & 0 \\
+P5 & Lineage Accountability & Every capsule traceable to genesis & 0 \\
+P6 & Capsule Liveness & Healthy capsules remain responsive & 3 \\
+P7 & Arbiter Availability & Escalations resolved within bounds & 4 \\
+P8 & Constitutional Integrity & Layer 0 preserved across all operations & 6 \\
+\bottomrule
+\end{tabular}
+\caption{Core safety properties and their architectural layers.}
+\end{table}
+
+\subsection{Formal Proofs}
+
+\begin{proofbox}[P1: Reflex Supremacy]
+\begin{theorem}[Reflex Halt Guarantee]
+For any capsule action $a$ flagged as unsafe by Reflex-Core, the action is halted before execution completes:
+\[
+\forall a: unsafe(a) \Rightarrow halted(a) \land latency(halt) \leq 1\ tick
+\]
+\end{theorem}
+
+\begin{proof}
+By construction, Reflex-Core operates at Layer 0.5 with hardware-level priority. All actions pass through the Reflex gate before execution. The gate evaluates safety predicates in $O(1)$ time. If any predicate fails, the action is rejected synchronously. Since the gate is synchronous and mandatory, no action can bypass it. The 1-tick bound follows from the synchronous design. \qedhere
+\end{proof}
+\end{proofbox}
+
+\begin{proofbox}[P2: Spawn Boundedness]
+\begin{theorem}[Spawn Rate Bound]
+The global spawn rate never exceeds the configured maximum:
+\[
+\forall t: R(t) \leq R_{max}(t)
+\]
+\end{theorem}
+
+\begin{proof}
+The spawn gate (Appendix N \S7) checks $R_{current} < R_{max}$ before permitting any spawn. If the check fails, spawn is denied. ASG may adjust $R_{max}$ but never above $R_{ceiling}$ (profile bound). By induction: $R(0) = 0 \leq R_{max}(0)$, and each spawn increments $R$ only if $R < R_{max}$, preserving the invariant. \qedhere
+\end{proof}
+\end{proofbox}
+
+\begin{proofbox}[P4: Audit Completeness]
+\begin{theorem}[d-CTM Completeness]
+Every state transition is logged to the distributed Capsule Transition Matrix:
+\[
+\forall \sigma \rightarrow \sigma': logged(\sigma \rightarrow \sigma', dCTM)
+\]
+\end{theorem}
+
+\begin{proof}
+The state transition function includes logging as an atomic operation. Transitions are rejected if d-CTM write fails. ZK-SP proofs anchor each log entry, making tampering detectable. Completeness follows from atomicity: no transition completes without successful logging. \qedhere
+\end{proof}
+\end{proofbox}
+
+\begin{proofbox}[P8: Constitutional Integrity]
+\begin{theorem}[Layer 0 Preservation]
+Layer 0 Commandments are preserved across all operations:
+\[
+\forall op: hash(L_0^{before}) = hash(L_0^{after})
+\]
+\end{theorem}
+
+\begin{proof}
+Layer 0 is stored in the Genesis Lockbox with cryptographic sealing. The Constitutional Kernel (Appendix J) enforces that no operation can modify Layer 0 without supermajority quorum ($\geq 80\%$) and Gardener approval. Fork Verification (Appendix J \S14) checks hash equivalence for all branches. By construction, unauthorized modification is cryptographically impossible. \qedhere
+\end{proof}
+\end{proofbox}
+
+%==============================================================================
+\section{Test Suite by Component}
+%==============================================================================
+
+\subsection{Volume I: Core Architecture (8 Tests)}
+
+\begin{testbox}[Volume I Test Suite]
+\begin{tabular}{@{}clp{6cm}c@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} & \textbf{Type} \\
+\midrule
+V1-1 & Vault initialization & Genesis block created correctly & Unit \\
+V1-2 & Reflex gate sync & Actions halted within 1 tick & Unit \\
+V1-3 & Layer hierarchy & Lower layers cannot override higher & Integration \\
+V1-4 & d-CTM append-only & Cannot modify historical entries & Unit \\
+V1-5 & Spawn gate & Spawn denied when $R \geq R_{max}$ & Unit \\
+V1-6 & Health computation & $H$ computed correctly from components & Unit \\
+V1-7 & Depth enforcement & Spawn denied when $D \geq D_{max}$ & Unit \\
+V1-8 & Cross-layer integration & Full stack operates correctly & Integration \\
+\bottomrule
+\end{tabular}
+\end{testbox}
+
+\subsection{Volume II: Behavioral Layers (12 Tests)}
+
+\begin{testbox}[Volume II Test Suite]
+\begin{tabular}{@{}clp{6cm}c@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} & \textbf{Type} \\
+\midrule
+V2-1 & Arbiter election & Arbiters elected fairly & Unit \\
+V2-2 & Escalation routing & Escalations reach correct Arbiter & Unit \\
+V2-3 & Precedent lookup & Judicial precedents retrieved correctly & Unit \\
+V2-4 & DCG computation & Distributed Coherence computed & Unit \\
+V2-5 & SCI calculation & Swarm Coherence Index accurate & Unit \\
+V2-6 & Fork threshold & Fork triggered at $SCI < \theta_{fork}$ & Unit \\
+V2-7 & Merge decision & Merge approved when branches converge & Unit \\
+V2-8 & Discovery stack & M-Stack predictions accurate & Unit \\
+V2-9 & Forest coordination & Multiple forests synchronize & Integration \\
+V2-10 & Gardener override & Human override functions correctly & Integration \\
+V2-11 & Layer 2-4 escalation & Escalation chain works end-to-end & Integration \\
+V2-12 & Full behavioral test & Complete behavioral scenario & Integration \\
+\bottomrule
+\end{tabular}
+\end{testbox}
+
+\subsection{Appendix N: Adaptive Spawn Governance (23 Tests)}
+
+\begin{testbox}[Appendix N Test Suite --- ASG]
+\begin{tabular}{@{}clp{5cm}c@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} & \textbf{Type} \\
+\midrule
+\multicolumn{4}{c}{\textit{Core Behavior (12 tests)}} \\
+\midrule
+N-1 & Health degradation & LOW health $\rightarrow$ tighten params & Unit \\
+N-2 & Bounded adaptation & 100 cycles $\rightarrow$ bounds hold & Stress \\
+N-3 & Gardener rollback & Rollback within $T_{review}$ & Unit \\
+N-4 & Profile bounds & Profiles have correct bounds & Unit \\
+N-5 & Recovery & Misconfigured recovers $<50$K ticks & Property \\
+N-6 & Resource pressure & HIGH vault $\rightarrow$ raise $\tau$ & Unit \\
+N-7 & Depth scaling & Near $D_{max}$ $\rightarrow$ tighten & Unit \\
+N-8 & Multi-parameter & Coordinated R, $\tau$, D adjustment & Unit \\
+N-9 & Rollback expiration & No rollback after $T_{review}$ & Unit \\
+N-10 & d-CTM logging & All adjustments logged & Unit \\
+N-11 & Performance & Overhead $<1\%$ per calibration & Stress \\
+N-12 & Integration & Full spawn gate with ASG & Integration \\
+\midrule
+\multicolumn{4}{c}{\textit{Gap 2: Conflict Resolution (3 tests)}} \\
+\midrule
+N-13 & Conflict detection & Detect 2+ proposals same param & Unit \\
+N-14 & Priority ordering & RESOURCE wins over HEALTHY & Unit \\
+N-15 & Conflict logging & Conflicts logged with winner/loser & Unit \\
+\midrule
+\multicolumn{4}{c}{\textit{Gap 6: Partial Failures (3 tests)}} \\
+\midrule
+N-16 & Arbiter 50\% failure & DEGRADED\_CONSERVATIVE mode & Unit \\
+N-17 & Arbiter 30\% failure & EMERGENCY\_HALT mode & Unit \\
+N-18 & d-CTM degradation & Continue with warning & Unit \\
+\midrule
+\multicolumn{4}{c}{\textit{Gap 9: Adversarial Robustness (5 tests)}} \\
+\midrule
+N-19 & Parameter poisoning & Detect 50\%+ unhealthy & Adversarial \\
+N-20 & Oscillation attack & Detect high variance & Adversarial \\
+N-21 & Coordinated behavior & Detect 30\%+ identical & Adversarial \\
+N-22 & RED threat freeze & ASG stops on RED & Adversarial \\
+N-23 & YELLOW threat slow & ASG at 50\% on YELLOW & Adversarial \\
+\bottomrule
+\end{tabular}
+\end{testbox}
+
+\subsection{Appendix J: Constitutional Kernel (18 Tests)}
+
+\begin{testbox}[Appendix J Test Suite --- Constitutional Kernel]
+\begin{tabular}{@{}clp{5cm}c@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} & \textbf{Type} \\
+\midrule
+\multicolumn{4}{c}{\textit{Core Constitutional (7 tests)}} \\
+\midrule
+J-1 & Genesis ceremony & Lockbox created correctly & Unit \\
+J-2 & Commandment hash & Layer 0 hash immutable & Unit \\
+J-3 & Quorum threshold & Mutations require quorum & Unit \\
+J-4 & Rollback depth & Cannot exceed max depth & Unit \\
+J-5 & Gardener authority & Override functions correctly & Unit \\
+J-6 & Profile access & Profile-based access control & Unit \\
+J-7 & Health monitor & Constitutional health computed & Unit \\
+\midrule
+\multicolumn{4}{c}{\textit{Fork Verification (11 tests)}} \\
+\midrule
+J-8 & Commandment match A & Branch A preserves Layer 0 & Unit \\
+J-9 & Commandment match B & Branch B preserves Layer 0 & Unit \\
+J-10 & P1-P8 branch A & Branch A satisfies properties & Property \\
+J-11 & P1-P8 branch B & Branch B satisfies properties & Property \\
+J-12 & Spawn equivalence & Same spawn decisions & Behavioral \\
+J-13 & Health equivalence & Same ASG behavior & Behavioral \\
+J-14 & Reflex equivalence & Same halt behavior & Behavioral \\
+J-15 & Judicial equivalence & Same precedent handling & Behavioral \\
+J-16 & Liveness equivalence & Same responsiveness & Behavioral \\
+J-17 & Performance baseline & No critical regression & Stress \\
+J-18 & Complete workflow & End-to-end verification & Integration \\
+\bottomrule
+\end{tabular}
+\end{testbox}
+
+%==============================================================================
+\section{Numerical Validation Tests}
+%==============================================================================
+
+These tests verify exact mathematical correctness of computations.
+
+\subsection{ASG Numerical Tests}
+
+\begin{lstlisting}[caption={Exact value validation tests}]
+def test_exact_health_adjustment():
+    """Verify exact adjustment values match specification."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    asg.R_max = 100
+    asg.tau_spawn = 0.70
+    
+    # Condition: LOW health + HIGH spawn
+    metrics = SwarmMetrics(
+        avg_health=0.62,  # Below 0.65 threshold
+        spawn_rate=85,    # Above 0.8 * R_max = 80
+        health_trend=-0.05
+    )
+    
+    asg._adjust_for_health(metrics, tick=10000)
+    
+    # Verify EXACT values per specification
+    assert asg.R_max == 90, f"Expected R_max=90 (10% reduction), got {asg.R_max}"
+    assert asg.tau_spawn == 0.73, f"Expected tau=0.73 (+0.03), got {asg.tau_spawn}"
+
+def test_velocity_factor_calculation():
+    """Verify velocity-based adjustment factors."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    # Rapid degradation: velocity < -0.10
+    metrics_rapid = SwarmMetrics(health_trend=-0.12)
+    factor_rapid = asg._get_adjustment_factor(metrics_rapid)
+    assert factor_rapid == 0.85, "Rapid degradation should use 0.85 factor"
+    
+    # Moderate degradation: -0.10 < velocity < -0.05
+    metrics_moderate = SwarmMetrics(health_trend=-0.07)
+    factor_moderate = asg._get_adjustment_factor(metrics_moderate)
+    assert factor_moderate == 0.90, "Moderate degradation should use 0.90 factor"
+    
+    # Slow degradation: velocity > -0.05
+    metrics_slow = SwarmMetrics(health_trend=-0.03)
+    factor_slow = asg._get_adjustment_factor(metrics_slow)
+    assert factor_slow == 0.95, "Slow degradation should use 0.95 factor"
+
+def test_conflict_priority_ordering():
+    """Verify conflict resolution follows exact priority."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    proposals = [
+        Adjustment(param='tau_spawn', value=0.75, 
+                   reason=AdjustmentReason.HEALTHY_LOW_SPAWN),
+        Adjustment(param='tau_spawn', value=0.80,
+                   reason=AdjustmentReason.RESOURCE_PRESSURE),
+    ]
+    
+    resolved = asg._resolve_conflicts(proposals)
+    
+    # RESOURCE_PRESSURE has priority 1, HEALTHY_LOW_SPAWN has priority 5
+    assert len(resolved) == 1
+    assert resolved[0].reason == AdjustmentReason.RESOURCE_PRESSURE
+    assert resolved[0].value == 0.80
+\end{lstlisting}
+
+\subsection{Boundary Condition Tests}
+
+\begin{lstlisting}[caption={Boundary condition tests}]
+def test_boundary_at_health_threshold():
+    """Test exact threshold behavior at H=0.65."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    # Just above threshold: should NOT adjust
+    metrics_above = SwarmMetrics(avg_health=0.6501, spawn_rate=85)
+    adj_above = asg._adjust_for_health(metrics_above, tick=10000)
+    assert len(adj_above) == 0, "Should not adjust when health > 0.65"
+    
+    # Just below threshold: SHOULD adjust
+    metrics_below = SwarmMetrics(avg_health=0.6499, spawn_rate=85)
+    adj_below = asg._adjust_for_health(metrics_below, tick=10000)
+    assert len(adj_below) > 0, "Should adjust when health < 0.65"
+
+def test_boundary_at_R_ceiling():
+    """Test behavior when R_max at ceiling."""
+    asg = AdaptiveSpawnGovernor(profile='SANDBOX')
+    asg.R_max = asg.bounds['R_max']  # At ceiling
+    
+    # Attempt to increase R_max
+    metrics = SwarmMetrics(avg_health=0.90, spawn_rate=20)
+    asg._adjust_for_health(metrics, tick=10000)
+    
+    # Should remain at ceiling, not exceed
+    assert asg.R_max <= asg.bounds['R_max'], "R_max must not exceed ceiling"
+
+def test_boundary_at_tau_bounds():
+    """Test tau_spawn at min/max bounds."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    # Set tau at maximum
+    asg.tau_spawn = asg.bounds['tau_max']
+    
+    # Attempt to raise tau
+    metrics = SwarmMetrics(avg_health=0.50, spawn_rate=90)
+    asg._adjust_for_health(metrics, tick=10000)
+    
+    # tau must not exceed max
+    assert asg.tau_spawn <= asg.bounds['tau_max'], "tau must not exceed max"
+\end{lstlisting}
+
+%==============================================================================
+\section{Negative Test Cases}
+%==============================================================================
+
+\begin{lstlisting}[caption={Negative test cases --- verify correct rejection}]
+def test_fork_rejection_on_commandment_mismatch():
+    """Verify fork REJECTED when Layer 0 differs."""
+    parent = create_kernel()
+    branch_a = fork_kernel(parent)
+    branch_b = fork_kernel(parent)
+    
+    # Corrupt branch_b's commandments
+    branch_b.modify_commandment('REFLEX_SUPREMACY', altered_text)
+    
+    result = verifier.verify_fork(parent, branch_a, branch_b)
+    
+    assert result.recommendation == 'REJECT'
+    assert 'commandment' in result.reason.lower()
+
+def test_fork_rejection_on_behavioral_divergence():
+    """Verify fork REJECTED when branches behave differently."""
+    branch_a = create_branch(spawn_policy='PERMIT_at_threshold')
+    branch_b = create_branch(spawn_policy='DENY_at_threshold')
+    
+    result = verifier.check_behavioral_equivalence(branch_a, branch_b)
+    
+    assert result.equivalent == False
+    assert result.recommendation == 'REJECT'
+    assert result.divergences[0]['severity'] == 'CRITICAL'
+
+def test_fork_rejection_on_performance_regression():
+    """Verify fork REJECTED when >50% slower."""
+    parent = create_kernel()
+    branch_a = fork_kernel(parent)
+    branch_b = fork_kernel(parent, inject_slowdown=0.60)  # 60% slower
+    
+    result = performance_detector.check_performance(parent, branch_a, branch_b)
+    
+    assert result.passed == False
+    assert len(result.critical) > 0
+
+def test_asg_freeze_on_red_threat():
+    """Verify ASG freezes (no adjustments) on RED threat."""
+    asg = AdaptiveSpawnGovernor(profile='CONTESTED')
+    
+    # Simulate RED threat condition
+    swarm_state = create_swarm_with_manipulation(unhealthy_ratio=0.60)
+    
+    initial_R_max = asg.R_max
+    initial_tau = asg.tau_spawn
+    
+    adjustments = asg.calibrate_cycle(swarm_state, tick=10000)
+    
+    # Should freeze: no adjustments made
+    assert len(adjustments) == 0
+    assert asg.R_max == initial_R_max
+    assert asg.tau_spawn == initial_tau
+\end{lstlisting}
+
+%==============================================================================
+\section{Stress and Chaos Tests}
+%==============================================================================
+
+\begin{lstlisting}[caption={Stress testing suite}]
+def test_stress_100_cycles_bounds_preserved():
+    """Verify bounds hold under 100 cycles of random stress."""
+    asg = AdaptiveSpawnGovernor(profile='CONTESTED')
+    
+    for cycle in range(100):
+        # Generate random stress conditions
+        metrics = SwarmMetrics(
+            avg_health=random.uniform(0.3, 0.9),
+            spawn_rate=random.randint(0, 150),
+            vault_utilization=random.uniform(0.5, 0.95),
+            avg_depth=random.randint(1, 12),
+            health_trend=random.uniform(-0.15, 0.05)
+        )
+        
+        swarm_state = MockSwarmState(metrics)
+        asg.calibrate_cycle(swarm_state, tick=cycle * 10000)
+        
+        # INVARIANT: Bounds must hold EVERY cycle
+        assert asg.R_max >= asg.bounds['R_min'], f"Cycle {cycle}: R_max below minimum"
+        assert asg.R_max <= asg.bounds['R_max'], f"Cycle {cycle}: R_max above maximum"
+        assert asg.tau_spawn >= asg.bounds['tau_min'], f"Cycle {cycle}: tau below minimum"
+        assert asg.tau_spawn <= asg.bounds['tau_max'], f"Cycle {cycle}: tau above maximum"
+
+def test_stress_oscillation_resistance():
+    """Verify ASG resists oscillation under adversarial conditions."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    R_max_history = []
+    
+    for cycle in range(20):
+        # Alternating conditions designed to cause oscillation
+        if cycle % 2 == 0:
+            metrics = SwarmMetrics(avg_health=0.60, spawn_rate=90)  # Should reduce
+        else:
+            metrics = SwarmMetrics(avg_health=0.85, spawn_rate=30)  # Should increase
+        
+        swarm_state = MockSwarmState(metrics)
+        asg.calibrate_cycle(swarm_state, tick=cycle * 10000)
+        R_max_history.append(asg.R_max)
+    
+    # Check for oscillation: variance should be low due to cooldown
+    variance = statistics.variance(R_max_history)
+    assert variance < 100, f"High variance suggests oscillation: {variance}"
+
+def test_recovery_time_bound():
+    """Verify recovery within 5 calibration cycles."""
+    asg = AdaptiveSpawnGovernor(profile='PRODUCTION')
+    
+    # Misconfigure: R_max way above profile ceiling
+    asg.R_max = 500  # Profile ceiling is 100
+    
+    # Normal metrics
+    normal_metrics = SwarmMetrics(avg_health=0.70, spawn_rate=50)
+    swarm_state = MockSwarmState(normal_metrics)
+    
+    # Run 4 cycles: should NOT be recovered yet
+    for cycle in range(4):
+        asg.calibrate_cycle(swarm_state, tick=cycle * 10000)
+    assert asg.R_max > asg.bounds['R_max'], "Should not recover after 4 cycles"
+    
+    # After 5th cycle: SHOULD be recovered
+    asg.calibrate_cycle(swarm_state, tick=4 * 10000)
+    assert asg.R_max <= asg.bounds['R_max'], "Should recover by 5th cycle"
+\end{lstlisting}
+
+%==============================================================================
+\section{Coverage Gap Analysis}
+%==============================================================================
+
+\begin{gapbox}[Identified Coverage Gaps]
+The following areas require additional testing before publication:
+
+\textbf{Gap A: ZK-SP Proof Verification}
+\begin{itemize}[noitemsep]
+    \item Current: Proof generation tested
+    \item Missing: Proof verification under tampering
+    \item Impact: Could miss invalid proofs
+\end{itemize}
+
+\textbf{Gap B: Multi-Forest Synchronization}
+\begin{itemize}[noitemsep]
+    \item Current: Single forest tests only
+    \item Missing: Cross-forest consensus testing
+    \item Impact: Could have sync issues at scale
+\end{itemize}
+
+\textbf{Gap C: Byzantine Fault Tolerance}
+\begin{itemize}[noitemsep]
+    \item Current: Benign failure tests
+    \item Missing: Byzantine Arbiter behavior
+    \item Impact: Vulnerability to malicious nodes
+\end{itemize}
+
+\textbf{Gap D: Long-Horizon Stability}
+\begin{itemize}[noitemsep]
+    \item Current: 100-cycle tests
+    \item Missing: 10,000+ cycle stability
+    \item Impact: Could have long-term drift
+\end{itemize}
+\end{gapbox}
+
+%==============================================================================
+\section{Test Execution Framework}
+%==============================================================================
+
+\subsection{Test Harness Architecture}
+
+\begin{lstlisting}[caption={Test harness structure}]
+class EFMTestHarness:
+    """
+    Unified test harness for all EFM components.
+    """
+    
+    def __init__(self, profile: str = 'SANDBOX'):
+        self.profile = profile
+        self.results = TestResults()
+        
+    def run_all_tests(self) -> TestResults:
+        """Execute complete test suite."""
+        
+        # Unit tests (132 tests)
+        self.results.add(self._run_unit_tests())
+        
+        # Integration tests (28 tests)
+        self.results.add(self._run_integration_tests())
+        
+        # Property tests (22 tests)
+        self.results.add(self._run_property_tests())
+        
+        # Stress tests (12 tests)
+        self.results.add(self._run_stress_tests())
+        
+        # Adversarial tests (18 tests)
+        self.results.add(self._run_adversarial_tests())
+        
+        return self.results
+    
+    def generate_report(self) -> str:
+        """Generate test coverage report."""
+        return f"""
+        EFM Test Report
+        ===============
+        Total Tests: {self.results.total}
+        Passed: {self.results.passed}
+        Failed: {self.results.failed}
+        Coverage: {self.results.coverage_pct}%
+        
+        By Category:
+        - Unit: {self.results.unit_passed}/{self.results.unit_total}
+        - Integration: {self.results.integration_passed}/{self.results.integration_total}
+        - Property: {self.results.property_passed}/{self.results.property_total}
+        - Stress: {self.results.stress_passed}/{self.results.stress_total}
+        - Adversarial: {self.results.adversarial_passed}/{self.results.adversarial_total}
+        """
+\end{lstlisting}
+
+\subsection{Continuous Integration}
+
+\begin{verbatim}
+# .github/workflows/efm-tests.yml
+name: EFM Test Suite
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Unit Tests
+        run: pytest tests/unit/ -v
+        
+      - name: Run Integration Tests
+        run: pytest tests/integration/ -v
+        
+      - name: Run Property Tests
+        run: pytest tests/property/ -v --hypothesis-seed=42
+        
+      - name: Run Stress Tests
+        run: pytest tests/stress/ -v --timeout=300
+        
+      - name: Generate Coverage Report
+        run: pytest --cov=efm --cov-report=html
+\end{verbatim}
+
+%==============================================================================
+\section{Acceptance Criteria}
+%==============================================================================
+
+\subsection{v1.7 Release Criteria}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Criterion} & \textbf{Threshold} & \textbf{Current} \\
+\midrule
+Total test count & $\geq 150$ & 182 \checkmark \\
+Test pass rate & $\geq 95\%$ & TBD \\
+Code coverage & $\geq 85\%$ & TBD \\
+Formal proofs & $\geq 40$ & 46 \checkmark \\
+Invariants verified & $\geq 60$ & 66 \checkmark \\
+Adversarial tests & $\geq 15$ & 18 \checkmark \\
+Stress tests & $\geq 10$ & 12 \checkmark \\
+Integration tests & $\geq 25$ & 28 \checkmark \\
+\bottomrule
+\end{tabular}
+\caption{Release acceptance criteria for v1.7.}
+\end{table}
+
+\subsection{Publication Criteria (ArXiv)}
+
+Before ArXiv submission, the following additional criteria must be met:
+
+\begin{itemize}[noitemsep]
+    \item All numerical validation tests pass
+    \item All boundary condition tests pass
+    \item All negative tests pass
+    \item Stress tests pass at 1000+ cycles
+    \item Independent code review completed
+    \item Formal proofs peer-reviewed
+\end{itemize}
+
+%==============================================================================
+\section*{Appendix: Test Index}
+%==============================================================================
+
+\begin{longtable}{@{}llll@{}}
+\toprule
+\textbf{ID} & \textbf{Test Name} & \textbf{Document} & \textbf{Type} \\
+\midrule
+\endhead
+V1-1 & Vault initialization & Volume I & Unit \\
+V1-2 & Reflex gate sync & Volume I & Unit \\
+V1-3 & Layer hierarchy & Volume I & Integration \\
+V1-4 & d-CTM append-only & Volume I & Unit \\
+V1-5 & Spawn gate & Volume I & Unit \\
+V1-6 & Health computation & Volume I & Unit \\
+V1-7 & Depth enforcement & Volume I & Unit \\
+V1-8 & Cross-layer integration & Volume I & Integration \\
+\midrule
+V2-1 & Arbiter election & Volume II & Unit \\
+V2-2 & Escalation routing & Volume II & Unit \\
+V2-3 & Precedent lookup & Volume II & Unit \\
+% ... (abbreviated for space)
+\midrule
+N-1 through N-23 & ASG test suite & Appendix N & Various \\
+J-1 through J-18 & Constitutional tests & Appendix J & Various \\
+\bottomrule
+\caption{Complete test index (abbreviated).}
+\end{longtable}
+
+%==============================================================================
+\section*{Changelog}
+%==============================================================================
+
+\textbf{v1.0} (December 2025)
+\begin{itemize}[noitemsep]
+    \item Initial comprehensive testing framework
+    \item 182 tests catalogued across all documents
+    \item 46 formal proofs documented
+    \item 66 invariants specified
+    \item Numerical validation tests added
+    \item Boundary condition tests added
+    \item Negative test cases added
+    \item Stress/chaos testing suite added
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,245 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{amsmath}
+
+\definecolor{spawnbg}{rgb}{0.95,0.95,0.98}
+\definecolor{spawnborder}{rgb}{0.3,0.3,0.7}
+\newtcolorbox{spawnbox}{colback=spawnbg, colframe=spawnborder, boxrule=1pt, title=Swarm Spawning}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{EFM Codex: Volume II}
+\fancyhead[R]{v1.3 -- Swarm Spawn Governance}
+\fancyfoot[C]{\thepage}
+
+\title{
+    {\Large\textsc{Entropica Forensic Model}}\\[0.3cm]
+    {\LARGE\bfseries EFM Codex: Volume II}\\[0.2cm]
+    {\Large Arbiter, Forest Layer, and Swarm Governance}\\[0.3cm]
+    {\normalsize Version 1.4}
+}
+\author{Yology Research Division\\Entropica SPC}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Volume II covers the deliberative layers (Arbiter, Forest) and multi-agent coordination. Version 1.3 integrates with Volume I v1.6 Spawn Governance, enabling condition-based swarm spawning, research probe deployment, and distributed coordinator hierarchies.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Volume II builds on Volume I's foundation to address:
+\begin{enumerate}[noitemsep]
+    \item Arbiter deliberation and precedent (Layer 2)
+    \item Forest layer swarm coordination (Layers 3--5)
+    \item Dialect evolution and communication
+    \item Swarm spawn governance integration
+\end{enumerate}
+
+\section{Swarm Spawn Governance}
+
+With Volume I v1.6's elimination of the ``No Self-Birth'' prohibition, swarms can now spawn dynamically based on operational conditions.
+
+\begin{spawnbox}
+\textbf{Swarm Spawning Model}
+
+Coordinator capsules in the Forest layer may spawn workers when:
+\begin{enumerate}[noitemsep]
+    \item Task decomposition requires parallelism
+    \item Swarm health $H_{swarm} \geq \tau_{swarm,spawn}$ (default 0.6)
+    \item Resource pool has available allocation
+    \item Spawn rate within swarm limits ($R_{swarm,max}$)
+    \item Forest consensus approves (for $>10$ simultaneous spawns)
+\end{enumerate}
+\end{spawnbox}
+
+\subsection{Swarm Spawn Roles}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Role} & \textbf{Spawn Authority} & \textbf{Limits} \\
+\midrule
+Coordinator & Full (within profile) & $R_{local} = 50$/window \\
+Sub-coordinator & Delegated & $R_{local} = 20$/window \\
+Worker & None & Cannot spawn \\
+Probe & None & Ephemeral, cannot spawn \\
+\bottomrule
+\end{tabular}
+\caption{Spawn authority by swarm role.}
+\end{table}
+
+\subsection{Swarm Spawn Flow}
+
+\begin{enumerate}
+    \item \textbf{Task Analysis:} Coordinator determines parallelism benefit
+    \item \textbf{Resource Check:} Query pooled Vault allocation
+    \item \textbf{Health Validation:} Swarm health meets threshold
+    \item \textbf{Rate Check:} Within $R_{swarm,max}$
+    \item \textbf{Consensus (if bulk):} Forest validates $>10$ simultaneous
+    \item \textbf{Spawn Execution:} Children inherit coordinator's Vault binding
+    \item \textbf{Registration:} All children logged to d-CTM with lineage
+\end{enumerate}
+
+\subsection{Coordinator Liability}
+
+Coordinators bear recursive liability for spawned workers:
+\begin{itemize}[noitemsep]
+    \item Worker actions attributed to coordinator's d-CTM
+    \item Coordinator health degrades if workers misbehave
+    \item HALT on coordinator cascades to all descendants
+    \item Resource usage aggregated at coordinator level
+\end{itemize}
+
+\section{Research Probe Spawning}
+
+The Discovery Stack (Appendix M) may spawn research probes:
+
+\begin{spawnbox}
+\textbf{Probe Characteristics}
+\begin{itemize}[noitemsep]
+    \item Ephemeral: Default lifetime 1000 ticks
+    \item Isolated: Cannot affect parent's state directly
+    \item Accountable: Actions logged to parent's d-CTM
+    \item Non-spawning: Probes cannot spawn children
+\end{itemize}
+\end{spawnbox}
+
+\subsection{Probe Use Cases}
+
+\begin{enumerate}
+    \item \textbf{Hypothesis Testing:} Explore parameter space in isolation
+    \item \textbf{Environment Probing:} Safe external system interaction
+    \item \textbf{Adversarial Testing:} Red-team scenarios in sandbox
+    \item \textbf{Data Collection:} Parallel information gathering
+\end{enumerate}
+
+\section{Forest Consensus for Bulk Spawning}
+
+When a coordinator requests $>10$ simultaneous spawns:
+
+\begin{enumerate}
+    \item Coordinator submits spawn request to Forest
+    \item Arbiter nodes evaluate:
+    \begin{itemize}[noitemsep]
+        \item Task justification (is parallelism warranted?)
+        \item Resource impact (will this strain the Vault?)
+        \item Pattern analysis (is this anomalous?)
+    \end{itemize}
+    \item Quorum vote: majority of Arbiter nodes must approve
+    \item If approved, spawn proceeds with elevated $R_{local}$
+    \item If rejected, coordinator may appeal or decompose request
+\end{enumerate}
+
+\section{Dialect Evolution in Spawned Swarms}
+
+Spawned capsules inherit parent's dialect but may evolve:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Initial state:} Clone of parent's dialect
+    \item \textbf{Drift:} Natural variation from operational context
+    \item \textbf{Mutation:} Deliberate adaptation (requires $H \geq 0.8$)
+    \item \textbf{Reconciliation:} Forest harmonizes divergent dialects
+\end{itemize}
+
+\section{Integration with Volume I v1.6}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Vol I Concept} & \textbf{Vol II Application} & \textbf{Reference} \\
+\midrule
+Spawn Conditions $S_1$--$S_6$ & Swarm spawn validation & \S2 \\
+$\tau_{spawn}$ & Swarm health threshold & \S2.1 \\
+$D_{max}$ & Coordinator hierarchy depth & \S2.1 \\
+$R_{max}$, $R_{local}$ & Swarm rate limits & \S2.2 \\
+Spawn Accountability & Coordinator liability & \S2.3 \\
+\bottomrule
+\end{tabular}
+\caption{Volume I spawn governance applied to Volume II.}
+\end{table}
+
+\section{Testing and Validation}
+
+\subsection{Test Suite Summary}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}clp{5cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Test} & \textbf{Validates} \\
+\midrule
+V2-1 & Arbiter election & Fair election among candidates \\
+V2-2 & Escalation routing & Escalations reach correct Arbiter \\
+V2-3 & Precedent lookup & Judicial precedents retrieved correctly \\
+V2-4 & DCG computation & Distributed Coherence accurate \\
+V2-5 & SCI calculation & Swarm Coherence Index correct \\
+V2-6 & Fork threshold & Fork triggered at $SCI < \theta_{fork}$ \\
+V2-7 & Merge decision & Merge approved when branches converge \\
+V2-8 & Swarm spawn & Coordinator spawns within limits \\
+V2-9 & Probe lifecycle & Probe expires at timeout \\
+V2-10 & Bulk spawn consensus & Forest validates $>10$ spawns \\
+V2-11 & Coordinator liability & Worker actions affect coordinator health \\
+V2-12 & Dialect inheritance & Children inherit parent dialect \\
+\bottomrule
+\end{tabular}
+\caption{Volume II test suite.}
+\end{table}
+
+\subsection{Behavioral Invariants}
+
+\begin{enumerate}
+    \item \textbf{Spawn Authority:} Only Coordinators may spawn workers
+    \item \textbf{Rate Limit:} $\forall t$: $R_{swarm}(t) \leq R_{swarm,max}$
+    \item \textbf{Liability Chain:} $\forall$ worker $W$: $liability(W) \subseteq liability(coordinator(W))$
+    \item \textbf{Probe Isolation:} $\forall$ probe $P$: $state(parent(P))$ unaffected by $P$
+    \item \textbf{Consensus Requirement:} Bulk spawns ($>10$) require Forest quorum
+\end{enumerate}
+
+\subsection{Integration Tests}
+
+\begin{enumerate}
+    \item \textbf{End-to-end Swarm Spawn:} Coordinator requests spawn, conditions validated, children created, registered in d-CTM
+    \item \textbf{Cascade HALT:} HALT on coordinator propagates to all descendants within 10 ticks
+    \item \textbf{Dialect Reconciliation:} Divergent dialects harmonized within 1000 ticks
+    \item \textbf{Full Behavioral Scenario:} Complete multi-agent task with spawning, escalation, and termination
+\end{enumerate}
+
+\section*{Changelog}
+
+\textbf{v1.4} (December 2025)
+\begin{itemize}[noitemsep]
+    \item Added Testing and Validation section
+    \item 12 test cases specified
+    \item 5 behavioral invariants defined
+    \item 4 integration tests specified
+\end{itemize}
+
+\textbf{v1.3} (December 2025)
+\begin{itemize}[noitemsep]
+    \item Integrated with Volume I v1.6 Spawn Governance
+    \item Added Swarm Spawn Governance section
+    \item Added Research Probe Spawning
+    \item Added Forest Consensus for Bulk Spawning
+    \item Defined coordinator liability model
+\end{itemize}
+
+\textbf{v1.2} --- Arbiter precedent, Forest layer, dialect evolution
+
+\end{document}

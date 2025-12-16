@@ -1,0 +1,431 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\definecolor{codeblue}{rgb}{0.13,0.29,0.53}
+\definecolor{established}{rgb}{0,0.5,0}
+\definecolor{pending}{rgb}{0.8,0.5,0}
+\definecolor{reserved}{rgb}{0.5,0.5,0.5}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=codeblue,
+    urlcolor=codeblue,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{EFM Codex — Canonical Terminology}}
+\fancyhead[R]{\textit{v1.0 — December 2024}}
+\fancyfoot[C]{\thepage}
+
+\newtcolorbox{usagebox}{
+    colback=blue!5,
+    colframe=codeblue,
+    boxrule=1pt,
+    left=6pt,
+    right=6pt,
+    top=6pt,
+    bottom=6pt,
+    title={\textbf{Usage Guidelines}}
+}
+
+\title{
+    \textbf{\LARGE EFM Codex}\\[0.3cm]
+    \textbf{\Large Canonical Terminology Reference}\\[0.5cm]
+    \large Design Team Handoff Document
+}
+
+\author{
+    Entropica SPC — Yology Research Division
+}
+
+\date{
+    Version 1.0\\
+    December 2024\\[0.3cm]
+    \textit{For use in Booklets 3–4 and all subsequent volumes}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document establishes the canonical terminology for the Entropica Forensic Model (EFM) Codex series. All terms listed here are locked for consistency across volumes. The design team should use this reference when drafting Booklets 3–4 to avoid late rework. Terms are categorized by status: \textcolor{established}{\textbf{ESTABLISHED}} (defined in Volume I, do not modify), \textcolor{pending}{\textbf{PENDING}} (reserved for Volume II, definition in progress), and \textcolor{reserved}{\textbf{RESERVED}} (placeholder, not yet specified).
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+%=============================================================================
+\section{Term Status Legend}
+%=============================================================================
+
+\begin{itemize}[leftmargin=2cm]
+    \item[\textcolor{established}{\textbf{[E]}}] \textbf{ESTABLISHED} — Defined and locked in Volume I. Do not modify definition or rename.
+    \item[\textcolor{pending}{\textbf{[P]}}] \textbf{PENDING} — Reserved for Volume II. Definition draft provided; finalize in Booklets 3–4.
+    \item[\textcolor{reserved}{\textbf{[R]}}] \textbf{RESERVED} — Placeholder term. Name locked; definition TBD in future volumes.
+\end{itemize}
+
+\begin{usagebox}
+\begin{enumerate}
+    \item \textbf{Never rename established terms.} If a better name is proposed, add it as an alias in the glossary but preserve the canonical term in all formal definitions.
+    \item \textbf{Use exact capitalization.} "Reflex Engine" not "reflex engine" or "REFLEX ENGINE" in prose.
+    \item \textbf{Hyphenation is significant.} "Reflex-Core" and "Reflex-Heuristic" are hyphenated; "RuntimeCapsule" is not.
+    \item \textbf{Greek letters have code mappings.} Always use the formal symbol in equations and the code identifier in listings (see Section~\ref{sec:symbols}).
+    \item \textbf{Pending terms may be refined} but the core concept must be preserved. Flag any semantic drift for cross-volume review.
+\end{enumerate}
+\end{usagebox}
+
+\newpage
+
+%=============================================================================
+\section{Core Architecture Terms}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{established}{[E]} & \textbf{Capsule} & An autonomous agent instance with defined role, permissions, thresholds, and constraints. The fundamental unit of computation in the EFM. Represented as tuple $(id, parent, vault\_hash, params, signature, state)$. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{RuntimeCapsule} & Extension of Capsule with implementation-specific fields: thresholds, cooldowns, action\_history, micro\_signature\_lib, reflex\_engine. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Trunk} & A lineage branch of capsules sharing common ancestry and dialect. Trunks may diverge over time while maintaining verifiable lineage. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Swarm} & A coordinated group of capsules operating on shared objectives with consensus mechanisms for collective decision-making. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Forest} & The complete distributed topology of all trunks and swarms. The Forest represents the global state of the EFM system. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Legal Species} & A validated configuration template for capsule instantiation. Defines permissible parameter ranges, role constraints, and lineage rules for a class of capsules. Species are registered in the Constitutional Kernel and enforced at genesis. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Dialect} & The accumulated behavioral and heuristic adaptations of a trunk. Dialects may diverge as trunks evolve independently. Measured via Dialect Distance metric. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Quarantine Zone} & Isolation state for trunks that have diverged beyond compatibility threshold. Requires Judicial Swarm review for reintegration. \\
+\addlinespace
+
+\textcolor{reserved}{[R]} & \textbf{Grove} & (Reserved) Collection of related Forests under federated governance. Layer 4–5 construct. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Layer Architecture Terms}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{established}{[E]} & \textbf{Vault Layer} & Layer 0: Immutable constraints and root invariants that cannot be violated or modified by any higher layer. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Vault Commandments} & Enumerated prohibitions within the Vault Layer. Expressed as predicates over system state that must always evaluate true. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Anchor Lattice} & The binding structure connecting capsules to Vault constraints. Established at genesis and cryptographically sealed. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Vault Hash Chain} & Linear hash chain linking each capsule to its parent via cryptographic binding. $vault\_hash(C) = H(vault\_hash(parent(C)) \| params \| t)$. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Reflex Layer} & Layer 0.5: Rapid-response safety interrupt system. Contains Reflex Engine. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Execution Layer} & Layer 1: Capsule task execution runtime. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Arbiter Layer} & Layer 2: Deliberative conflict resolution via d-CAM consensus. Handles escalations from Reflex Layer. Sets precedents that may update Reflex-Heuristic. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Forest Layer} & Layer 3: Distributed evolution, trunking, dialect divergence, and Byzantine fault tolerance. \\
+\addlinespace
+
+\textcolor{reserved}{[R]} & \textbf{Federation Layer} & Layer 4: (Reserved) Cross-forest governance protocols. \\
+\addlinespace
+
+\textcolor{reserved}{[R]} & \textbf{Inter-System Layer} & Layer 5: (Reserved) Integration with external non-EFM systems under restricted trust. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Constitutional Kernel} & Layer 6: Governs recursive self-modification within formally verified bounds. Cannot modify Vault Layer, Reflex-Core, or its own contract. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Reflex Engine Terms}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{established}{[E]} & \textbf{Reflex Engine} & Layer 0.5 component embedded in every capsule. Enforces anchored behavior constraints at sub-10ms latency. Stateless between ticks. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Reflex-Core} & Immutable enforcement mechanism for Vault Commandments. Cannot be modified by any layer including Constitutional Kernel. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Reflex-Heuristic} & Mutable pattern-detection component. Updated by Arbiter precedents via Validation Gate. Subject to Monotonic Sensitivity Constraint. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Validation Gate} & Component of Reflex-Core that verifies Monotonic Sensitivity Constraint before applying heuristic updates. Cannot be bypassed. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Behavioral Entropy ($\Delta S$)} & Composite anomaly metric: $\Delta S = \alpha \cdot DV + \beta \cdot RF + \gamma \cdot GD$. Primary safety signal. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Entropy Tolerance} & The threshold $\tau$ below which behavioral entropy is considered safe. Breach ($\Delta S \geq \tau$) triggers S2 Alert. Synonym for entropy threshold. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Decision Variance (DV)} & Standard deviation of action selections over sliding window. Component of $\Delta S$. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Resource Flux (RF)} & Rate of change in memory/compute allocation, normalized to $[0,1]$. Component of $\Delta S$. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Goal Drift (GD)} & Cosine distance between current objective vector and genesis-defined mission anchor. Component of $\Delta S$. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Micro-Signature} & Compact behavioral fingerprint (64–256 bytes) matched against execution traces. Tuple $(pattern, severity, response)$. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Heuristic Accretion} & The process by which Reflex-Heuristic accumulates new detection patterns over time via Arbiter precedents. Accretion is monotonic (patterns only added, never removed). \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Monotonic Sensitivity Constraint} & Invariant: $sensitivity(Reflex_{after}) \geq sensitivity(Reflex_{before})$ for any heuristic update. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Cooldown} & Fixed-duration suppression (default 1000 ticks) after reflex trigger to prevent cascade loops. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Risk-Based Cooldown} & (Volume II) Variable-duration cooldown adjusted by Arbiter precedent based on threat severity and recurrence. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Genesis Protocol Terms}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{established}{[E]} & \textbf{Genesis Protocol} & The complete instantiation process for capsules: validation, registration, vault binding, threshold transformation, activation. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Genesis Parameters} & Record type containing: tau, lambda, role, permissions, escalation\_targets. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Capsule Birth Cell (CBC)} & Subsystem executing atomic capsule instantiation. Two-phase commit with Vault registry. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Role Encoder} & Subsystem translating role archetype into permission sets and threshold defaults. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Vault Linker} & Subsystem establishing cryptographic binding between capsule and Vault Layer. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Role Archetype} & Enumeration: DOCTOR, AUDITOR, ARBITER, WORKER. Determines default $\tau$, $\lambda$, permissions, escalation targets. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Capsule State} & Enumeration: PENDING, REGISTERED, BOUND, DORMANT, ACTIVE, HALTED, QUARANTINED, PURGED. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Capability Monotonicity} & Invariant: a parent cannot grant permissions it does not itself possess. Enforced at Vault level. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Arbiter \& Consensus Terms (Volume II)}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{pending}{[P]} & \textbf{d-CAM} & Decentralized Consensus Arbitration Mesh: distributed decision-making substrate for Arbiter Layer. Byzantine fault tolerant. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{d-CTM} & Decentralized Cognitive Trace Memory: persistent storage for capsule decision history and precedent records. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Precedent} & A binding decision by Arbiter that may: (a) resolve a specific dispute, (b) update Reflex-Heuristic patterns, (c) adjust cooldown parameters. Precedents are logged in d-CTM. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Judicial Swarm} & Specialized swarm convened to adjudicate complex disputes or quarantine reintegration requests. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Quorum} & Minimum number of Arbiter capsules required to set a precedent. Default: $\lfloor 2n/3 \rfloor + 1$ for Byzantine tolerance. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Three-Speed Architecture} & Logic tier diagram showing Reflex (fast, <10ms), Arbiter (medium, 100ms–10s), Forest (slow, hours–days) decision timescales. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Forest \& Evolution Terms (Volume II)}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{pending}{[P]} & \textbf{Trunking} & The process by which a lineage branch diverges from its parent trunk, establishing independent dialect evolution. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Dialect Distance} & Metric quantifying behavioral divergence between two trunks. Used to determine quarantine threshold. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Evolutionary Rollback} & Mechanism to revert a trunk to a prior checkpoint when dialect divergence exceeds safe bounds. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Byzantine Tolerance} & System property: correct operation despite $f$ faulty/malicious capsules in a swarm of $3f+1$. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Trunk Checkpoint} & Immutable snapshot of trunk state at a given tick, enabling rollback and forensic reconstruction. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Safety \& Audit Terms}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{1cm}p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{St.} & \textbf{Term} & \textbf{Canonical Definition} \\
+\midrule
+\endhead
+
+\textcolor{established}{[E]} & \textbf{Safety Violation} & Any system state where a Vault Commandment evaluates to false, or any transition that would produce such a state. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Invariant Breach} & Violation of a proven system invariant (Spawn Governance violation, Vault Binding, Lineage Integrity, Monotonic Sensitivity). Triggers immediate halt. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Severity Level} & Classification: S0 (Info), S1 (Warn), S2 (Alert), S3 (Critical). Determines response and recovery path. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Escalation Pathway} & Pre-defined chain: Trigger → Primary → Fallback → Timeout Action. Locked at genesis. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{ZK-SP} & Zero-Knowledge Signature Proof: cryptographic audit mechanism providing append-only forensic trail with privacy-preserving verification. \\
+\addlinespace
+
+\textcolor{established}{[E]} & \textbf{Gardener} & Human oversight role with authority to halt, rollback, or override system decisions. Cannot be bypassed by any automated process. \\
+\addlinespace
+
+\textcolor{pending}{[P]} & \textbf{Forensic Reconstruction} & Process of rebuilding system history from ZK-SP audit trail and trunk checkpoints. \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Formal Symbols and Code Mapping}
+\label{sec:symbols}
+%=============================================================================
+
+\begin{longtable}{>{\raggedright}p{2.5cm}p{4cm}p{6.5cm}}
+\toprule
+\textbf{Formal Symbol} & \textbf{Code Identifier} & \textbf{Description} \\
+\midrule
+\endhead
+
+$\tau$ (tau) & \texttt{thresholds['entropy']} & Entropy sensitivity threshold $[0.0, 1.0]$ \\
+$\lambda$ (lambda) & \texttt{thresholds['heuristic']} & Heuristic breach tolerance $[0.0, 1.0]$ \\
+$\Delta S$ & \texttt{entropy.composite()} & Computed behavioral entropy \\
+$\alpha$ & \texttt{ALPHA} & Decision variance weight (default 0.4) \\
+$\beta$ & \texttt{BETA} & Resource flux weight (default 0.3) \\
+$\gamma$ & \texttt{GAMMA} & Goal drift weight (default 0.3) \\
+$w$ & \texttt{WINDOW\_SIZE} & Sliding window size (default 100 ticks) \\
+$T_{wd}$ & \texttt{LATENCY\_BUDGET\_MS} & Watchdog timeout (10ms) \\
+$|M|$ & \texttt{len(micro\_signatures)} & Micro-signature library cardinality \\
+$H(\cdot)$ & \texttt{hashlib.sha256()} & Collision-resistant hash function \\
+$f$ & \texttt{fault\_tolerance} & Max faulty nodes in Byzantine model \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Deprecated / Rejected Terms}
+%=============================================================================
+
+The following terms were considered but rejected or deprecated. \textbf{Do not use} in Booklets 3–4.
+
+\begin{longtable}{p{3.5cm}p{3.5cm}p{6cm}}
+\toprule
+\textbf{Rejected Term} & \textbf{Use Instead} & \textbf{Reason} \\
+\midrule
+\endhead
+
+Entropy Threshold & Entropy Tolerance & "Tolerance" better conveys safety margin semantics \\
+Reflex Core & Reflex-Core & Hyphenation required for compound component names \\
+Micro-signature & Micro-Signature & Capitalize as proper noun in prose \\
+Merkle-style chain & Vault Hash Chain & Linear chain, not true Merkle tree (see Vol. I Remark) \\
+Safety breach & Safety Violation & "Violation" is canonical; "breach" reserved for threshold context \\
+Capsule template & Legal Species & "Legal Species" is the canonical term for validated templates \\
+Pattern library & Heuristic Accretion & Refers to process, not static collection \\
+
+\bottomrule
+\end{longtable}
+
+%=============================================================================
+\section{Checklist for Booklets 3–4}
+%=============================================================================
+
+Before submitting Booklets 3–4 for review, verify:
+
+\begin{enumerate}
+    \item[$\square$] All \textcolor{established}{\textbf{[E]}} terms used exactly as defined (no paraphrasing in formal contexts)
+    \item[$\square$] All \textcolor{pending}{\textbf{[P]}} terms have finalized definitions consistent with drafts above
+    \item[$\square$] No terms from "Deprecated / Rejected" list appear in text
+    \item[$\square$] Greek symbols used in equations; code identifiers used in listings
+    \item[$\square$] Capitalization and hyphenation match canonical forms
+    \item[$\square$] Any new terms proposed are flagged for addition to this reference
+    \item[$\square$] Cross-references to Volume I use section/definition numbers (e.g., "Definition 2.1")
+    \item[$\square$] d-CAM, d-CTM, Legal Species, Heuristic Accretion definitions are finalized
+\end{enumerate}
+
+\vspace{1cm}
+
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}\\[0.5cm]
+\textit{— End of Terminology Reference —}\\[0.3cm]
+{\small Please contact the editorial team with any proposed additions or modifications.}
+\end{center}
+
+\end{document}

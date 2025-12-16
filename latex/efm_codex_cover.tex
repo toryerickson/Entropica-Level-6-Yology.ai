@@ -1,0 +1,161 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============ PACKAGES ============
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+% ============ COLORS ============
+\definecolor{entropicablue}{RGB}{30, 60, 114}
+\definecolor{entropicagold}{RGB}{180, 140, 50}
+\definecolor{safetyred}{RGB}{180, 50, 50}
+\definecolor{forestgreen}{RGB}{40, 100, 60}
+
+% ============ NO PAGE NUMBERS ============
+\pagestyle{empty}
+
+\begin{document}
+
+% ============ COVER PAGE ============
+\begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+    % Background gradient
+    \fill[entropicablue] (current page.south west) rectangle (current page.north east);
+    
+    % Decorative elements - layer representation
+    \foreach \y/\c in {-4/safetyred, -2/orange, 0/yellow, 2/forestgreen, 4/cyan, 6/entropicagold} {
+        \fill[\c, opacity=0.15] ([yshift=\y cm]current page.west) 
+            arc[start angle=180, end angle=0, radius=15cm] -- cycle;
+    }
+    
+    % Border frame
+    \draw[entropicagold, line width=2pt] 
+        ([shift={(1cm,1cm)}]current page.south west) rectangle 
+        ([shift={(-1cm,-1cm)}]current page.north east);
+    
+    % Inner frame
+    \draw[entropicagold, line width=0.5pt] 
+        ([shift={(1.3cm,1.3cm)}]current page.south west) rectangle 
+        ([shift={(-1.3cm,-1.3cm)}]current page.north east);
+\end{tikzpicture}
+
+\vspace*{3cm}
+
+\begin{center}
+    % Title
+    {\fontsize{42}{50}\selectfont\bfseries\color{white}
+    ENTROPICA\\[0.3cm]
+    FORENSIC MODEL}\\[1cm]
+    
+    {\fontsize{24}{30}\selectfont\color{entropicagold}
+    Complete Codex}\\[0.5cm]
+    
+    {\Large\color{white}
+    Version 1.5}\\[2cm]
+    
+    % Decorative line
+    {\color{entropicagold}\rule{0.6\textwidth}{1pt}}\\[2cm]
+    
+    % Subtitle
+    {\Large\color{white}\itshape
+    Bounded Autonomy through Reflexive Symbolic Cognition}\\[0.5cm]
+    
+    {\large\color{white}
+    A Framework for Safe, Accountable, and Evolvable AI Systems}\\[3cm]
+    
+    % Layer diagram
+    \begin{tikzpicture}[scale=0.8]
+        \foreach \i/\name/\col in {
+            0/Layer 0: Vault Commandments/safetyred,
+            1/Layer 0.5: Reflex-Core/orange,
+            2/Layer 1: Execution/yellow,
+            3/Layer 2: Arbiter/forestgreen,
+            4/Layer 3: Forest/cyan,
+            5/Layer 6: Constitutional Kernel/entropicagold
+        } {
+            \fill[\col, opacity=0.7] (-4, -\i*0.6) rectangle (4, -\i*0.6-0.5);
+            \node[white, font=\small] at (0, -\i*0.6-0.25) {\name};
+        }
+    \end{tikzpicture}\\[2cm]
+    
+    % Organization
+    {\Large\color{entropicagold}
+    Entropica SPC}\\[0.3cm]
+    
+    {\color{white}
+    Yology Research Division}\\[0.5cm]
+    
+    {\color{white}\small
+    December 2025}
+    
+\end{center}
+
+\vfill
+
+\begin{center}
+    {\small\color{white}
+    \textit{``Autonomy is inversely proportional to irreversibility.''}}\\[0.3cm]
+    {\footnotesize\color{entropicagold}
+    --- The Reversibility Principle, Volume I \S3.X}
+\end{center}
+
+\end{titlepage}
+
+% ============ INSIDE COVER ============
+\newpage
+\begin{center}
+\vspace*{2cm}
+
+{\LARGE\bfseries\color{entropicablue} EFM Codex v1.5}\\[1cm]
+
+{\large Publication Package}\\[2cm]
+
+\begin{tabular}{rl}
+\textbf{Document Set:} & 2 Volumes + 13 Appendices \\[0.3cm]
+\textbf{Total Pages:} & $\sim$250 \\[0.3cm]
+\textbf{Release Date:} & December 2025 \\[0.3cm]
+\textbf{Status:} & Publication Ready \\[0.3cm]
+\textbf{License:} & Proprietary --- Entropica SPC \\
+\end{tabular}
+
+\vspace{2cm}
+
+{\color{entropicablue}\rule{0.8\textwidth}{0.5pt}}
+
+\vspace{1cm}
+
+{\large\bfseries Core Architecture}\\[0.5cm]
+
+\begin{tabular}{ll}
+\textbf{Level 6 Bounded Autonomy} & Systems act without pre-approval \\
+\textbf{Reversibility Principle} & Autonomy $\propto$ recoverability \\
+\textbf{Four Commandments} & Immutable safety foundations \\
+\textbf{Three-Speed Safety} & Reflex $\rightarrow$ Arbiter $\rightarrow$ Forest \\
+\textbf{Evolutionary Feedback} & M $\rightarrow$ K $\rightarrow$ I cycle \\
+\end{tabular}
+
+\vspace{2cm}
+
+{\color{entropicablue}\rule{0.8\textwidth}{0.5pt}}
+
+\vspace{1cm}
+
+{\small\itshape
+This document set specifies the complete Entropica Forensic Model (EFM),\\
+a framework for building AI systems with hardware-enforced safety,\\
+cryptographic accountability, and bounded autonomous decision-making.}
+
+\vfill
+
+{\footnotesize
+\textbf{Contact:} Yology Research Division, Entropica SPC\\
+\textbf{Repository:} github.com/entropica/efm-codex
+}
+
+\end{center}
+
+\end{document}
