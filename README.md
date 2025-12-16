@@ -340,7 +340,7 @@ efm-codex/
 @techreport{efm2025,
   title   = {Entropica Forensic Model: A Framework for 
              Bounded Autonomous AI Systems},
-  author  = {Yology Research Division},
+  author  = {T. Stanford Erickson, Yology.ai Research Division},
   institution = {Entropica SPC},
   year    = {2025},
   version = {1.7},
@@ -365,8 +365,8 @@ See [CHANGELOG.md](CHANGELOG.md) for complete history.
 ---
 
 <p align="center">
-  <strong>Entropica SPC</strong><br>
-  <em>Yology Research Division</em><br>
+  <strong>T. Stanford Erickson <br> Entropica SPC</strong><br>
+  <em>Yology,ai Research Division</em><br>
   December 2025
 </p>
 
